@@ -67,12 +67,12 @@ def runningNewJobs(dbsession, logger):
     unprocessedJobs = Georeferenzierungsprozess.getUnprocessedObjectsOfTypeNew(dbsession)
     counter = 0
     for job in unprocessedJobs:
-        logger.debug('Start processing of a "new" georeference process with id - %s'%job.id)
+        logger.info('Start processing of a "new" georeference process with id - %s'%job.id)
         georefObj = Georeferenzierungsprozess.clearRaceConditions(job, dbsession)
         mapObj = Map.by_id(georefObj.mapid, dbsession)
         activate(georefObj, mapObj, dbsession, logger)
 
-        logger.debug('Finish processing of a "new" georeference process with id - %s'%job.id)
+        logger.info('Finish processing of a "new" georeference process with id - %s'%job.id)
         counter += 1
 
     return counter
@@ -88,7 +88,7 @@ def runningUpdateJobs(dbsession, logger):
     unprocessedJobs = Georeferenzierungsprozess.getUnprocessedObjectsOfTypeUpdate(dbsession)
     counter = 0
     for job in unprocessedJobs:
-        logger.debug('Start processing of a "update" georeference process with id - %s'%job.id)
+        logger.info('Start processing of a "update" georeference process with id - %s'%job.id)
         georefObj = Georeferenzierungsprozess.clearRaceConditions(job, dbsession)
 
         # get active georeference process and deactive him, if exist
@@ -102,7 +102,7 @@ def runningUpdateJobs(dbsession, logger):
         logger.info('Activate georeference processes with id %s ...'%georefObj.id)
         activate(georefObj, mapObj, dbsession, logger)
 
-        logger.debug('Finish processing of a "update" georeference process with id - %s'%job.id)
+        logger.info('Finish processing of a "update" georeference process with id - %s'%job.id)
         counter += 1
 
     return counter

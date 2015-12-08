@@ -138,8 +138,8 @@ class Georeferenzierungsprozess(Base):
         :type dbsession: sqlalchemy.orm.session.Session
         :return: List.<georeference.models.vkdb.georeferenzierungsprozess.Georeferenzierungsprozess> """
         return session.query(Georeferenzierungsprozess).filter(Georeferenzierungsprozess.processed == False)\
-            .filter(Georeferenzierungsprozess.adminvalidation != 'update')\
-            .filter(Georeferenzierungsprozess.type == 'new')\
+            .filter(Georeferenzierungsprozess.adminvalidation != 'invalide')\
+            .filter(Georeferenzierungsprozess.type == 'update')\
             .filter(Georeferenzierungsprozess.overwrites == 0)\
             .distinct(Georeferenzierungsprozess.mapid)
 
