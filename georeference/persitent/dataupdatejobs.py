@@ -112,8 +112,5 @@ if __name__ == '__main__':
     logger = createLogger('test', logging.DEBUG)
     logger.info('Looking for pending georeference processes ...')
     dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS))
-    if TEST_MODE:
-        updateDataBasis(dbsession, logger, True)
-    else:
-        updateDataBasis(dbsession, logger)
+    updateDataBasis(dbsession, logger, TEST_MODE)
     dbsession.commit()

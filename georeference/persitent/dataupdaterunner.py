@@ -15,6 +15,7 @@ from logging.handlers import TimedRotatingFileHandler
 from georeference.settings import DBCONFIG_PARAMS
 from georeference.settings import GEOREFERENCE_DAEMON_SETTINGS
 from georeference.settings import GEOREFERENCE_DAEMON_LOGGER
+from georeference.settings import TEST_MODE
 from georeference.models.meta import initializeDb
 from georeference.models.meta import getPostgresEngineString
 from georeference.utils.logger import createLogger
@@ -58,8 +59,8 @@ class GeoreferenceDaemonApp():
         LOGGER.info('Georeference update runner persitent is started!')
         while True:
             LOGGER.info('Looking for pending georeference processes ...')
-            dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS), LOGGER)
-            updateDataBasis(dbsession, LOGGER, True)
+            dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS))
+            updateDataBasis(dbsession, LOGGER, TEST_MODE)
             dbsession.commit()
             dbsession.close()
 
