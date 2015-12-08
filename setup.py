@@ -11,14 +11,13 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 
 requires = [
     'pyramid',
-    'pyramid_debugtoolbar',
     'SQLAlchemy',
     'zope.sqlalchemy',
     ]
 
-setup(name='process',
+setup(name='georeference',
       version='0.0',
-      description='process',
+      description='georeference',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
         "Programming Language :: Python",
@@ -40,9 +39,9 @@ setup(name='process',
       zip_safe=False,
       install_requires=requires,
       tests_require=requires,
-      test_suite="process",
+      test_suite="georeference",
       entry_points="""\
       [paste.app_factory]
-      main = process:main
+      main = georeference:main
       """,
       )
