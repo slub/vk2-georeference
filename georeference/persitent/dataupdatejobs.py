@@ -63,7 +63,7 @@ def runningNewJobs(dbsession, logger):
     :type logging.Logger: logger
     :return: int Number of processed jobs
     """
-    logger.info('Check for unprocessed georeference jobs ...')
+    logger.info('Check for unprocessed new georeference jobs ...')
     unprocessedJobs = Georeferenzierungsprozess.getUnprocessedObjectsOfTypeNew(dbsession)
     counter = 0
     for job in unprocessedJobs:
@@ -84,7 +84,7 @@ def runningUpdateJobs(dbsession, logger):
     :type logging.Logger: logger
     :return: int Number of processed jobs
     """
-    logger.info('Check for unprocessed georeference jobs ...')
+    logger.info('Check for unprocessed update georeference jobs ...')
     unprocessedJobs = Georeferenzierungsprozess.getUnprocessedObjectsOfTypeUpdate(dbsession)
     counter = 0
     for job in unprocessedJobs:
