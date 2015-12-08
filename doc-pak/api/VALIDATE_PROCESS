@@ -1,0 +1,27 @@
+Produces a validation request for a given parameter set.
+## Produce validation result for georeference process
+
+### URL endpoint (POST)
+
+/georeference/georef/validation
+
+### Response (Format/JSON)
+
+```{
+		"wmsUrl":"http:\/\/localhost\/cgi-bin\/mapserv?map=\/home\/mendt\/Workspace\/vkviewer\/tmp\/wms_e631089f-798f-4173-a59a-dc94f16d64f5.map",
+		"clip": {
+			"source":"EPSG:4314",
+			"polygon":[
+				[13.833652029097,50.799985270258],
+				[13.833359588309,50.900056349862],
+				[14.000050837636,50.900380554223],
+				[14.000294538293,50.800448419346],
+				[13.833652029097,50.799985270258]]
+		},
+		"layerId":"df_dk_0010001_5149_1943"
+	}```
+	
+	
+### Example Request
+
+ 	curl -XPOST 'http://localhost:8080/georeference/georef/validation' -d '{"georeference":{"source":"pixel","target":"EPSG:4314","gcps":[{"source":[361,7416],"target":[13.833333014208366,50.79999923620263]},{"source":[349,934],"target":[13.833333014141655,50.90000152496874]},{"source":[7189,913],"target":[14.00000095229274,50.90000152492751]},{"source":[7199,7386],"target":[14.00000095236039,50.7999992361616]}],"algorithm":"affine"},"id":10001577,"clip":{"source":"pixel","polygon":[[361,7416],[349,934],[7189,913],[7199,7386],[361,7416]]}}'

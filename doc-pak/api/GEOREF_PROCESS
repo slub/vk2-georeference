@@ -1,0 +1,207 @@
+# Request a georeference map process for rectifying a map image.
+
+Resources could be requests via `objectid` or `georeferenceid`.
+
+## Access to georeference process - by objectid
+
+### URL endpoint
+
+/georeference/georef/process/
+
+### GET/POST - Parameter (Format/JSON)
+
+Example - 1:
+
+```{ "objectid": 10000023 }```
+
+Example - 2:
+
+	`?objectid=10000023`
+	
+If only the `objectid` of a map is given, the service will response with the latest active georeference process. If no georeference process exist for a given map it will response an empty new parameter set. If there exist an new georeference parameter set which is right now not processed and waiting for activation, the service will response also a warning message, which indicates that the user would overwrite a existing georeference parameter set. 
+
+### Response (Format/JSON)
+
+Example - 1 (process does not exist):
+
+```{
+		"objectid": 10000361, 
+		"timestamp": "", 
+		"type": "new", 		
+		"maptype": "M",
+		"zoomify": "http://fotothek.slub-dresden.de/zooms/df/dk/0010000/df_dk_0010001_7126/ImageProperties.xml", 
+		"metadata": {
+			"title_long": "Me\u00dftischblatt 62 = [7126] : Aalen, 1934", 
+			"title_short": "Aalen", 
+			"dateiname": "df_dk_0010001_7126"
+		}
+	}```
+	
+Example - 1.1 (process does not exist but it is Messtischblatt):
+
+```{
+		"georeference": {
+			"source": "pixel", 
+			"target": "EPSG:4314", 
+			"gcps": [
+				{"source": [], "target": [9.99999904632568, 48.9000015258789]},
+				{"source": [], "target": [9.99999904632568, 48.7999992370605]}, 
+				{"source": [], "target": [10.1666669845581, 48.7999992370605]}, 
+				{"source": [], "target": [10.1666669845581, 48.9000015258789]}
+			],
+			"algorithm": "affine"
+		}, 
+		"extent": [9.99999904632568, 48.7999992370605, 10.1666669845581, 48.9000015258789],  // always defined in EPSG:4326
+		"objectid": 10000361, 
+		"timestamp": "", 
+		"type": "new", 
+		"maptype": "M",
+		"zoomify": "http://fotothek.slub-dresden.de/zooms/df/dk/0010000/df_dk_0010001_7126/ImageProperties.xml", 
+		"metadata": {
+			"title_long": "Me\u00dftischblatt 62 = [7126] : Aalen, 1934", 
+			"title_short": "Aalen", 
+			"dateiname": "df_dk_0010001_7126"
+		},
+		// in case of race condition also a warn message will be their
+		"warn": "Missing parameter (warn) in response ..."
+	}```
+	
+	
+Example - 2 (process exist):
+
+```{
+		"georeference": {
+			"new": {
+				"source": "pixel", 
+				"target": "EPSG:4314", 
+				"gcps": [
+					{"source": [637, 652], "target": [9.99999904632568, 48.9000015258789]},
+					{"source": [625, 7125], "target": [9.99999904632568, 48.7999992370605]}, 
+					{"source": [7741, 7133], "target": [10.1666669845581, 48.7999992370605]}, 
+					{"source": [7755, 668], "target": [10.1666669845581, 48.9000015258789]}
+				],
+				"algorithm": "affine"
+			},
+			"remove": {
+				"source": "pixel", 
+				"target": "EPSG:4314", 
+				"gcps": [
+					{"source": [6373, 6523], "target": [9.999999046325628, 48.900001235258789]},
+					
+				],
+			}
+		}, 
+		"maptype": "M",
+		"extent": [9.99999904632568, 48.7999992370605, 10.1666669845581, 48.9000015258789], 
+		"objectid": 10000361, 
+		"timestamp": "2014-12-04 16:13:38", 
+		"georeferenceid": 6932, 
+		"type": "update",
+		"clip": {
+			"source": "pixel", 
+			"polygon": [[637, 652], [625, 7125], [7741, 7133], [7755, 668], [637, 652]]
+		}, 
+		"zoomify": "http://fotothek.slub-dresden.de/zooms/df/dk/0010000/df_dk_0010001_7126/ImageProperties.xml", 
+		"metadata": {
+			"title_long": "Me\u00dftischblatt 62 = [7126] : Aalen, 1934", 
+			"title_short": "Aalen", 
+			"dateiname": "df_dk_0010001_7126"
+		},
+		// in case of race condition also a warn message will be their
+		"warn": "Missing parameter (warn) in response ..."
+	}```
+	
+	
+Example - 2.1 (process exist):
+
+```{
+		"georeference": {
+			"source": "pixel", 
+			"target": "EPSG:4314", 
+			"gcps": [
+				{"source": [637, 652], "target": [9.99999904632568, 48.9000015258789]},
+				{"source": [625, 7125], "target": [9.99999904632568, 48.7999992370605]}, 
+				{"source": [7741, 7133], "target": [10.1666669845581, 48.7999992370605]}, 
+				{"source": [7755, 668], "target": [10.1666669845581, 48.9000015258789]}
+			],
+			"algorithm": "affine"
+		}, 
+		"maptype": "M",
+		"extent": [9.99999904632568, 48.7999992370605, 10.1666669845581, 48.9000015258789], 
+		"objectid": 10000361, 
+		"timestamp": "2014-12-04 16:13:38", 
+		"georeferenceid": 6932, 
+		"type": "update",
+		"clip": {
+			"source": "pixel", 
+			"polygon": [[637, 652], [625, 7125], [7741, 7133], [7755, 668], [637, 652]]
+		}, 
+		"zoomify": "http://fotothek.slub-dresden.de/zooms/df/dk/0010000/df_dk_0010001_7126/ImageProperties.xml", 
+		"metadata": {
+			"title_long": "Me\u00dftischblatt 62 = [7126] : Aalen, 1934", 
+			"title_short": "Aalen", 
+			"dateiname": "df_dk_0010001_7126"
+		},
+		// in case of race condition also a warn message will be their
+		"warn": "Missing parameter (warn) in response ..."
+	}```
+
+### Example Request
+
+ 	curl -XPOST 'http://localhost:8080/georeference/georef/process' -d '{ "objectid": 10004589 }'
+ 	
+## Access to georeference process - via REST
+ 
+Access the georeference process via get.
+
+### URL endpoint (GET)
+
+/georeference/georef/process/{georeferenceprocessid}	 
+
+### Response (Format/JSON)
+
+```{
+		"georeference": {
+			"new": {
+				"source": "pixel", 
+				"target": "EPSG:4314", 
+				"gcps": [
+					{"source": [637, 652], "target": [9.99999904632568, 48.9000015258789]},
+					{"source": [625, 7125], "target": [9.99999904632568, 48.7999992370605]}, 
+					{"source": [7741, 7133], "target": [10.1666669845581, 48.7999992370605]}, 
+					{"source": [7755, 668], "target": [10.1666669845581, 48.9000015258789]}
+				],
+				"algorithm": "affine"
+			},
+			"remove": {
+				"source": "pixel", 
+				"target": "EPSG:4314", 
+				"gcps": [
+					{"source": [6373, 6523], "target": [9.999999046325628, 48.900001235258789]},
+					
+				],
+			}
+		}, 
+		"maptype": "M",
+		"extent": [9.99999904632568, 48.7999992370605, 10.1666669845581, 48.9000015258789], 
+		"objectid": 10000361, 
+		"timestamp": "2014-12-04 16:13:38", 
+		"georeferenceid": 6932, 
+		"type": "update",
+		"clip": {
+			"source": "pixel", 
+			"polygon": [[637, 652], [625, 7125], [7741, 7133], [7755, 668], [637, 652]]
+		}, 
+		"zoomify": "http://fotothek.slub-dresden.de/zooms/df/dk/0010000/df_dk_0010001_7126/ImageProperties.xml", 
+		"metadata": {
+			"title_long": "Me\u00dftischblatt 62 = [7126] : Aalen, 1934", 
+			"title_short": "Aalen", 
+			"dateiname": "df_dk_0010001_7126"
+		},
+		// in case of race condition also a warn message will be their
+		"warn": "Missing parameter (warn) in response ..."
+	}```
+	
+### Example Request
+
+ 	curl -XGET 'http://localhost:8080/georeference/georef/process/6129'

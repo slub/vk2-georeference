@@ -1,0 +1,1 @@
+The `vk2-georeference` application is the georeferencing backend. It can be used via SOAP through the `vk2-extension` and throught the georeference daemon, which can be run regulary and updated the databasis regarding the data in database.
