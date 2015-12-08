@@ -140,7 +140,7 @@ class Georeferenzierungsprozess(Base):
         return session.query(Georeferenzierungsprozess).filter(Georeferenzierungsprozess.processed == False)\
             .filter(Georeferenzierungsprozess.adminvalidation != 'invalide')\
             .filter(Georeferenzierungsprozess.type == 'update')\
-            .filter(Georeferenzierungsprozess.overwrites == 0)\
+            .filter(Georeferenzierungsprozess.overwrites != 0)\
             .distinct(Georeferenzierungsprozess.mapid)
 
     def setActive(self):
