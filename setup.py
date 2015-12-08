@@ -25,7 +25,7 @@ setup(name='georeference',
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         ],
-      message_extractors = { 'vkviewer': [
+      message_extractors = { 'georeference': [
 	('**.py', 'python', None),
 	('**.mako', 'mako', {'input_encoding': 'utf-8'}),
 	('static/**', 'ignore', None)

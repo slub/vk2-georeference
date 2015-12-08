@@ -45,3 +45,30 @@ Now all dependencies have been installed. Because the service relies on a the [P
 
 In production mode the service should be run behind an apache2 instance. 	
 
+##' Run vkviewer as a WSGI application over apache. This could be done via `mod_wsgi`. Therefor add the following to your apache virtualhost configuration
+
+```
+# Use only 1 Python sub-interpreter. Multiple sub-interpreters
+WSGIApplicationGroup %{GLOBAL}
+WSGIPassAuthorization On
+WSGIDaemonProcess pyramid user=www-data group=www-data threads=4 \
+	python-path=~/vk2-georeference/python_env/lib/python2.7/site-packages
+WSGIScriptAlias /georeference ~/vk2-georeference/pyramid.wsgi
+
+<Directory ~/vk2-georeference>
+	WSGIProcessGroup pyramid
+	Order allow,deny
+	Allow from all
+</Directory>
+```
+
+## Clear old installation
+
+In case you wanna clear an old installation of your pyramid application run the following commands:
+
+	rm -r georeference.egg-info/
+	rm -r dist/
+	rm -r build/lib.linux-x86_64-2.7/georeference/
+	rm -r python_env/lib/python2.7/site-packages/georeference-0.0-py2.7.egg/
+
+
