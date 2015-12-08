@@ -95,8 +95,8 @@ def runningUpdateJobs(dbsession, logger):
         activeGeorefProcess = Georeferenzierungsprozess.getActualGeoreferenceProcessForMapId(georefObj.mapid, dbsession)
         mapObj = Map.by_id(georefObj.mapid, dbsession)
 
-        logger.info('Deactivate georeference processes with id %s ...'%activeGeorefProcess.id)
         if activeGeorefProcess:
+            logger.info('Deactivate georeference processes with id %s ...'%activeGeorefProcess.id)
             deactivate(activeGeorefProcess, mapObj, dbsession, logger)
 
         logger.info('Activate georeference processes with id %s ...'%georefObj.id)
