@@ -23,8 +23,8 @@ Creates the virtual environement.
 
 Install the main python dependencies in the virtual environment.
 	
-	./python_env/bin/easy_install pyramid SQLAlchemy==0.8.3 psycopg2 pyramid_tm requests lockfile python-daemon numpy waitress
-	
+	./python_env/bin/easy_install pyramid SQLAlchemy==0.8.3 psycopg2 pyramid_tm requests python-daemon numpy waitress 
+		
 Some python libraries depend on C libraries, which can not be installed within a `virtualenv`. This is the case for the `gdal`, `mapscript`, `PIL` and `pyproj` dependencies. We therefor install them system wide (see section `Dependencies`) and link them in our virtual environment.
 
     ln -s /usr/lib/python2.7/dist-packages/gdal* ./python_env/lib/python2.7/site-packages/ 
@@ -70,5 +70,17 @@ In case you wanna clear an old installation of your pyramid application run the 
 	rm -r dist/
 	rm -r build/lib.linux-x86_64-2.7/georeference/
 	rm -r python_env/lib/python2.7/site-packages/georeference-0.0-py2.7.egg/
+	
+## Install georeference DAEMON
+
+The georeference daemon is used for a persistent update of the database. 
+
+The daemon could be started and stoped with:
+
+	python_env/bin/python georeference/daemon/dataupdaterunner.py start/stop
+	
+The settings for the daemon could be found in the:
+
+	georeference/settings.py
 
 

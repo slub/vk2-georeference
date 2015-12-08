@@ -70,7 +70,7 @@ class GeoreferenceDaemonApp():
 # Initialize DaemonRunner
 daemon_runner = runner.DaemonRunner(GeoreferenceDaemonApp())
 
-#This ensures that the logger file handle does not get closed during daemonization
+# This ensures that the logger file handle does not get closed during daemonization
 daemon_runner.daemon_context.files_preserve=[handler.stream]
 daemon_runner.do_action()
 
