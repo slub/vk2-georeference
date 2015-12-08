@@ -6,6 +6,7 @@
 /georeference.egg-info
 /process.egg-info
 /tmp/*
+/log
 
 # all files with ending 
 *.pyc
@@ -21,3 +22,6 @@ production.ini
 !/georeference/test/test-data/df_dk_0010001_4630_1928.tif
 !/georeference/test/test-data/test-mtb.tif
 
+# build files
+/build
+/dist
