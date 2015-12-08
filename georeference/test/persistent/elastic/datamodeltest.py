@@ -12,8 +12,8 @@ from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.metadata import Metadata
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.test.basetestcase import BaseTestCase
-from georeference.daemon.elastic.datamodel import createSearchRecord
-from georeference.daemon.elastic.datamodel import getTransformedClipPolygon
+from georeference.persitent.elastic.datamodel import createSearchRecord
+from georeference.persitent.elastic.datamodel import getTransformedClipPolygon
 
 class DataModelTest(BaseTestCase):
     

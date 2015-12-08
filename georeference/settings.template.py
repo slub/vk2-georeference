@@ -72,10 +72,10 @@ GEOREFERENCE_MAPFILE_DEFAULT_PARAMS = {
 }
 
 #
-# Parameter for the georeference daemon / persitent georeferencing
+# Parameter for the georeference persitent / persitent georeferencing
 #
 
-# Settings for logger of the georeference daemon
+# Settings for logger of the georeference persitent
 GEOREFERENCE_DAEMON_LOGGER = {
     'name':'georeferenceupdate',
     'file':'~/tmp/updatedaemon.log',
@@ -83,7 +83,7 @@ GEOREFERENCE_DAEMON_LOGGER = {
     'formatter':'%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 }
 
-# Settings for the georeference daemon
+# Settings for the georeference persitent
 GEOREFERENCE_DAEMON_SETTINGS = {
     'stdin':'~/tmp/null',
     'stdout':'~/tmp/tty',

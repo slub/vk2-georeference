@@ -28,9 +28,9 @@ from georeference.utils.process.georeferencer import rectifyPolynom
 from georeference.utils.process.tools import stripSRIDFromEPSG
 from georeference.scripts.updatetms import buildTMSCache
 from georeference.scripts.updatevrt import updateVirtualdatasetForTimestamp
-from georeference.daemon.elastic.datamodel import createSearchRecord
-from georeference.daemon.elastic.elasticsearch import pushRecordToEs
-from georeference.daemon.elastic.elasticsearch import deleteRecordFromEsById
+from georeference.persitent.elastic.datamodel import createSearchRecord
+from georeference.persitent.elastic.elasticsearch import pushRecordToEs
+from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
 
 # from georeference.binding.wms import pushMapObjToWmsDatabaseIndex
 

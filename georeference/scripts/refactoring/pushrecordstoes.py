@@ -14,7 +14,7 @@ from georeference.models.meta import getPostgresEngineString
 from georeference.models.meta import initializeDb
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
-from georeference.daemon.jobs.genericjobs import pushRecordToSearchIndex
+from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
 
 DATA_DIRECTORY = '/srv/vk/data/original'
 

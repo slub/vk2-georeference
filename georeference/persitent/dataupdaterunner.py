@@ -18,7 +18,7 @@ from georeference.settings import GEOREFERENCE_DAEMON_LOGGER
 from georeference.models.meta import initializeDb
 from georeference.models.meta import getPostgresEngineString
 from georeference.utils.logger import createLogger
-from georeference.daemon.dataupdatejobs import updateDataBasis
+from georeference.persitent.dataupdatejobs import updateDataBasis
 
 # insert the module paths for correct behavior on the command line
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -55,7 +55,7 @@ class GeoreferenceDaemonApp():
         self.pidfile_timeout = GEOREFERENCE_DAEMON_SETTINGS['pidfile_timeout']
 
     def run(self):
-        LOGGER.info('Georeference update runner daemon is started!')
+        LOGGER.info('Georeference update runner persitent is started!')
         while True:
             LOGGER.info('Looking for pending georeference processes ...')
             dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS), LOGGER)

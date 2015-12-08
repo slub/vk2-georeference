@@ -15,10 +15,10 @@ from georeference.models.vkdb.adminjobs import AdminJobs
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
 from georeference.utils.logger import createLogger
-from georeference.daemon.jobs.basicjobs import setIsValide
-from georeference.daemon.jobs.basicjobs import setInValide
-from georeference.daemon.jobs.georeferencejobs import activate
-from georeference.daemon.jobs.georeferencejobs import deactivate
+from georeference.persitent.jobs.basicjobs import setIsValide
+from georeference.persitent.jobs.basicjobs import setInValide
+from georeference.persitent.jobs.georeferencejobs import activate
+from georeference.persitent.jobs.georeferencejobs import deactivate
 
 def updateDataBasis(dbsession, logger, testing = False):
     """

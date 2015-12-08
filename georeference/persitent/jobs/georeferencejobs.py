@@ -7,10 +7,10 @@ Created on 05.08.15
 @author: mendt
 '''
 from georeference.settings import TEST_MODE
-from georeference.daemon.jobs.genericjobs import processGeorefImage
-from georeference.daemon.jobs.genericjobs import pushRecordToSearchIndex
-from georeference.daemon.jobs.genericjobs import removeRecordFromSearchIndex
-from georeference.daemon.jobs.genericjobs import updateMappingServices
+from georeference.persitent.jobs.genericjobs import processGeorefImage
+from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
+from georeference.persitent.jobs.genericjobs import removeRecordFromSearchIndex
+from georeference.persitent.jobs.genericjobs import updateMappingServices
 from georeference.utils.exceptions import GeoreferenceProcessingException
 from georeference.utils.process.tools import parseBoundingBoxPolygonFromFile
 from georeference.utils.process.tools import parseSRIDFromFile
