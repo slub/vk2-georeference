@@ -143,7 +143,7 @@ def createGdalDataset(srcImage, imageArray, driver, offset=None, dstFile=None):
     xSize = srcImage.size[0] if offset is None else srcImage.size[0] - offset['left'] - offset['right']
     ySize = srcImage.size[1] if offset is None else srcImage.size[1] - offset['top'] - offset['bottom']
     outputPath = dstFile if dstFile else ''
-    outputDataset = driver.Create(outputPath, xSize, ySize, 4, GDT_Byte)
+    outputDataset = driver.Create(outputPath, int(xSize), int(ySize), 4, GDT_Byte)
 
     # write band data to dataset
     for band in range(0,4):
