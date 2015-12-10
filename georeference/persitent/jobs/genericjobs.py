@@ -45,7 +45,7 @@ def processGeorefImage(mapObj, georefObj, logger):
     gcps = parseGcps(georefObj.georefparams['gcps'])
     georefTargetSRS = stripSRIDFromEPSG(georefObj.georefparams['target'])
     targetPath = os.path.join(GEOREFERENCE_PERSITENT_TARGETDIR, mapObj.apsdateiname+'.tif')
-    transformationAlgorithm = georefObj.georefparams['algorithm']
+    transformationAlgorithm = georefObj.georefparams['algorithm'] if 'algorithm' in georefObj.georefparams else 'affine'
     destPath = None
 
     logger.debug('Process georeference result ...')
