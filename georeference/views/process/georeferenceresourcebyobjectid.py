@@ -120,7 +120,7 @@ def generateGeoreferenceProcessForMapObj(mapObjId, request, log):
          
     log.debug('Check if there is special behavior needed in case of messtischblatt')    
     mtbGeorefBaseData = {}
-    if mapObj.maptype == 'M' and 'process' not in georeferenceData:
+    if mapObj.maptype == 'M' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
         mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
     if mapObj.maptype == 'GL' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
         mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
