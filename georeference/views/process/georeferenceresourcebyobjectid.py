@@ -118,12 +118,12 @@ def generateGeoreferenceProcessForMapObj(mapObjId, request, log):
             "type": "new"
         }
          
-    log.debug('Check if there is special behavior needed in case of messtischblatt')    
-    mtbGeorefBaseData = {}
-    if mapObj.maptype == 'M' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
-        mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
-    if mapObj.maptype == 'GL' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
-        mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
+    # log.debug('Check if there is special behavior needed in case of messtischblatt')
+    # mtbGeorefBaseData = {}
+    # if mapObj.maptype == 'M' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
+    #     mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
+    # if mapObj.maptype == 'GL' and 'process' not in georeferenceData and mapObj.boundingbox is not None:
+    #     mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
              
     log.debug('Check if there are pending processes in the database')
     warnMsg = {}
@@ -136,6 +136,6 @@ def generateGeoreferenceProcessForMapObj(mapObjId, request, log):
     }
     response.update(generalMetadata)
     response.update(georeferenceData)
-    response.update(mtbGeorefBaseData)
+    # response.update(mtbGeorefBaseData)
     response.update(warnMsg)
     return response

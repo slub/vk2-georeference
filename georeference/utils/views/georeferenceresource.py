@@ -54,11 +54,16 @@ def getSpecificGeoreferenceData(georefProcessObj, mapObj, srid,  dbsession):
     :type srid: str
     :type sqlalchemy.orm.session.Session: dbsession
     :return: dict """
-    return {
+    params = {
         'extent': mapObj.getExtent(dbsession, srid),
         'georeference': georefProcessObj.georefparams,
         'timestamp': str(georefProcessObj.timestamp),
         'type': 'update',
-        'clip': georefProcessObj.clippolygon,
         'georeferenceid': georefProcessObj.id
     }
+    if len(georefProcessObj.clippolygon['polygon']) == 0:
+        return params
+    else:
+        params['clip'] = georefProcessObj.clippolygon
+        return params
+
