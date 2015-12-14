@@ -42,7 +42,7 @@ class Metadata(Base):
     @classmethod
     def by_id(cls, id, session):
         return session.query(Metadata).filter(Metadata.mapid == id).first()
-#     
-#     @classmethod
-#     def all_byBlattnr(cls, blattnr, session):
-#         return session.query(Metadata).filter(Metadata.blattnr == blattnr).order_by(desc(Metadata.mapid))
+
+    @classmethod
+    def all(cls, session):
+        return session.query(Metadata).order_by(desc(Metadata.mapid))

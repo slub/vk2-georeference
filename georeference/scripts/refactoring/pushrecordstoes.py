@@ -16,15 +16,6 @@ from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierung
 from georeference.models.vkdb.map import Map
 from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
 
-DATA_DIRECTORY = '/srv/vk/data/original'
-
-DIRECTORY_TYPE_MAPPING = {
-    'M': 'mtb',
-    'A': 'mtb',
-    'TK': 'tk',
-    'GL': 'gl'
-}
-
 if __name__ == '__main__':
     logging.basicConfig()
     logger = logging.getLogger('Push recrords to ES')
