@@ -117,12 +117,17 @@ def generateGeoreferenceProcessForMapObj(mapObjId, request, log):
             "timestamp": "",
             "type": "new"
         }
-         
+
+    # This blog could be used for attaching information regarding the boundingbox and the extent to the
+    # response. In case no georeference information is registered yet this could be used by the client for
+    # doing a matching of corner point coordinates and the extent corners.
+    #
     # log.debug('Check if there is special behavior needed in case of messtischblatt')
-    mtbGeorefBaseData = {}
-    if (mapObj.maptype == 'M' or mapObj.maptype == 'GL') and 'georeference' not in georeferenceData and mapObj.boundingbox is not None:
-        mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
-             
+    # mtbGeorefBaseData = {}
+    # if mapObj.maptype == 'M' and 'georeference' not in georeferenceData and mapObj.boundingbox is not None:
+    #     mtbGeorefBaseData = getMtbGLSpecificGeoreferenceInformation(mapObj, request)
+    #     response.update(mtbGeorefBaseData)
+
     log.debug('Check if there are pending processes in the database')
     warnMsg = {}
     if checkIfPendingProcessesExist(mapObj, request):
@@ -134,6 +139,5 @@ def generateGeoreferenceProcessForMapObj(mapObjId, request, log):
     }
     response.update(generalMetadata)
     response.update(georeferenceData)
-    response.update(mtbGeorefBaseData)
     response.update(warnMsg)
     return response
