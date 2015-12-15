@@ -97,18 +97,6 @@ class DataModelTest(BaseTestCase):
         self.assertTrue('oai:de:slub-dresden:vk:id-10000023' in response, 'Missing key in response')
         self.assertEqual(response['oai:de:slub-dresden:vk:id-10000023']['dataid'], 'df_dk_0010001_4630_1928', 'Dataid has not expected value')
 
-    def testGenerationOfTransformedClipPolygon(self):
-        mapObj = Map.by_id(10000023, self.dbsession)
-        response = getTransformedClipPolygon(mapObj, self.georefProcess, self.logger)
-
-        print '====================='
-        print 'Test if testGenerationOfTransformedClipPolygon ...'
-        print response
-        print '====================='
-
-        self.assertTrue(isinstance(response, list), "Response is not of type list")
-        self.assertTrue(len(response) == 5, "Response has not expected length")
-
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

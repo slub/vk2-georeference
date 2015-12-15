@@ -313,7 +313,7 @@ def rectifyImageAffine(srcFile, dstFile, clipPolygon, gcps, srs, logger):
     logger.debug('Open image ...')
     srcImage = Image.open(srcFile)
 
-    logger.debug('Clip image ...')
+    logger.debug('Mask image ...')
     ndarray = maskImage(srcImage, clipPolygon)
 
     logger.debug('Calculate offset ...')
@@ -340,17 +340,19 @@ def rectifyImageAffine(srcFile, dstFile, clipPolygon, gcps, srs, logger):
 
     return dstFile
 
-def rectifyPolynom(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir, order=None):
+def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp=None, order=None,):
     """ Functions generates clips an image and adds a geotransformation matrix to it
 
     :type srcFile: str
     :type dstFile: str
-    :type clipPolygon: List.<Tuple.<int>>
+    :type maskPolygon: List.<List.<int>> The mask polygon is given in pixel coordinates and could be used to mask a image
+                                         before georefencing. Better us clipPolygon instand
     :type gcps: List.<gdal.GCP>
     :type srs: int Right now the function only supports 4314 as spatial reference system
     :type logger: logging.logger
     :type tmpDir: str
-    :type order: int (Default None)
+    :type clipShp: str (Default: None)
+    :type order: int (Default: None)
     :return: str
     :raise: ValueError """
     tmpFile = None
@@ -362,11 +364,13 @@ def rectifyPolynom(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir, ord
         logger.debug('Open image ...')
         srcImage = Image.open(srcFile)
 
-        logger.debug('Clip image ...')
-        ndarray = maskImage(srcImage, clipPolygon)
+        logger.debug('Mask image ...')
+        ndarray = maskImage(srcImage, maskPolygon)
 
         logger.debug('Calculate offset ...')
-        offset = getOffsetValues(clipPolygon, srcImage)
+        offset = {'left': 0, 'top': 0, 'right': 0, 'bottom': 0}
+        if len(maskPolygon) > 0:
+            offset = getOffsetValues(maskPolygon, srcImage)
 
         # create an output geotiff
         newDataset = createGeotiff(srcImage, ndarray, offset, tmpFile, logger)
@@ -387,13 +391,23 @@ def rectifyPolynom(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir, ord
         if os.path.exists(tmpFile):
             # doing a rectification of an image using a polynomial transformation
             # and a nearest neighbor resampling method
-            logger.debug('Do georeferencing based on an polynom transformation ...')
+            logger.debug('Do georeferencing based on a polynom transformation ...')
             resampling = 'near'
-            if order is None:
-                command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -wm 500 %s %s'%(resampling, tmpFile, dstFile)
-            else:
-                ord = order if order in [1,2,3] else 1
-                command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -order %s -wm 500 %s %s'%(resampling, ord, tmpFile, dstFile)
+            order = order if order in [1,2,3] else None
+            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -wm 500 ' % resampling
+
+            # check if order is described
+            if order is not None:
+                command += '-order %s ' % order
+
+            # check if clip shape is defined
+            if clipShp is not None:
+                command += '-cutline \'%s\' -crop_to_cutline ' % clipShp
+
+            # append source and dest file
+            command += ' %s %s' % (tmpFile, dstFile)
+
+            # run the command
             subprocess.check_call(command, shell=True)
         return dstFile
     except:
@@ -402,16 +416,18 @@ def rectifyPolynom(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir, ord
         if os.path.exists(tmpFile):
             os.remove(tmpFile)
 
-def rectifyTps(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir):
+def rectifyTps(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp=None):
     """ Functions generates clips an image and adds a geotransformation matrix to it
 
     :type srcFile: str
     :type dstFile: str
-    :type clipPolygon: List.<Tuple.<int>>
+    :type maskPolygon: List.<List.<int>> The mask polygon is given in pixel coordinates and could be used to mask a image
+                                         before georefencing. Better us clipPolygon instand
     :type gcps: List.<gdal.GCP>
     :type srs: int Right now the function only supports 4314 as spatial reference system
     :type logger: logging.logger
     :type tmpDir: str
+    :type clipShp: str (Default: None)
     :return: str
     :raise: ValueError """
     tmpFile = None
@@ -424,11 +440,13 @@ def rectifyTps(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir):
         logger.debug('Open image ...')
         srcImage = Image.open(srcFile)
 
-        logger.debug('Clip image ...')
-        ndarray = maskImage(srcImage, clipPolygon)
+        logger.debug('Mask image ...')
+        ndarray = maskImage(srcImage, maskPolygon)
 
         logger.debug('Calculate offset ...')
-        offset = getOffsetValues(clipPolygon, srcImage)
+        offset = {'left': 0, 'top': 0, 'right': 0, 'bottom': 0}
+        if len(maskPolygon) > 0:
+            offset = getOffsetValues(maskPolygon, srcImage)
 
         # create an output geotiff
         newDataset = createGeotiff(srcImage, ndarray, offset, tmpFile, logger)
@@ -447,11 +465,16 @@ def rectifyTps(srcFile, dstFile, clipPolygon, gcps, srs, logger, tmpDir):
 
         # doing the rectification
         if os.path.exists(tmpFile):
-            logger.debug('Do georeferencing based on an tps transformation ...')
+            logger.debug('Do georeferencing based on a tps transformation ...')
             resampling = 'near'
-            # doing a rectification of an image using a polynomial transformation
-            # and a nearest neighbor resampling method
-            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -tps -wm 500 %s %s'%(resampling, tmpFile, dstFile)
+            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -tps -wm 500 ' % resampling
+
+            # check if clip shape is defined
+            if clipShp is not None:
+                command += '-cutline \'%s\' -crop_to_cutline ' % clipShp
+
+            # append source and dest file
+            command += ' %s %s' % (tmpFile, dstFile)
             subprocess.check_call(command, shell=True)
         return dstFile
     except:

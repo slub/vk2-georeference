@@ -509,7 +509,7 @@ class GeoreferencerTest(unittest.TestCase):
     #@unittest.skip("testRectifyImagePolynom1ForMtb")
     def testRectifyImagePolynom1ForMtb(self):
         destPath = os.path.join(self.dir, 'test-mtb-rectified-polynom1.tif')
-        response = rectifyPolynom(self.file, destPath, self.testData, self.testGcp, 4314, self.logger, self.dir, order=1)
+        response = rectifyPolynom(self.file, destPath, self.testData, self.testGcp, 4314, self.logger, self.dir, None, order=1)
         
         print '====================='
         print 'Test if testRectifyImagePolynom1ForMtb  ...'
@@ -543,7 +543,7 @@ class GeoreferencerTest(unittest.TestCase):
             gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
             gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
         ]
-        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, order=1)
+        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, None, order=1)
         
         print '====================='
         print 'Test if testRectifyImagePolynom1ForAK  ...'
@@ -577,7 +577,7 @@ class GeoreferencerTest(unittest.TestCase):
             gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
             gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
         ]
-        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, order=2)
+        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, None, order=2)
         
         print '====================='
         print 'Test if testRectifyImagePolynom2ForAK  ...'
@@ -611,7 +611,7 @@ class GeoreferencerTest(unittest.TestCase):
             gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
             gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
         ]
-        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, order=3)
+        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, None, order=3)
         
         print '====================='
         print 'Test if testRectifyImagePolynom3ForAK  ...'

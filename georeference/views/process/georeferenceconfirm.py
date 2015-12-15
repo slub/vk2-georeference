@@ -16,9 +16,12 @@ from georeference import LOGGER
 from georeference.settings import ADMIN_ADDR
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.utils.exceptions import ParameterException
+from georeference.utils.parser.georeferenceparser import parseGeoreferenceParamsFromRequest
+from georeference.utils.process.tools import convertListToPostgisString
+from georeference.utils.process.tools import stripSRIDFromEPSG
 from georeference.utils.tools import convertUnicodeDictToUtf
 from georeference.utils.tools import convertTimestampToPostgisString
-from georeference.utils.parser.georeferenceparser import parseGeoreferenceParamsFromRequest
+
 
 ERROR_MSG = "Please check your request parameters or contact the administrator (%s)."%ADMIN_ADDR
 
@@ -49,18 +52,16 @@ def georeferenceConfirm(request):
         LOGGER.debug('Save georeference parameter in datase ...')
         timestamp = convertTimestampToPostgisString(datetime.now())
         georefParam = str(convertUnicodeDictToUtf(requestData['georeference']))
-        clipParam = str(convertUnicodeDictToUtf(requestData['clip']))
+        clipParam = convertUnicodeDictToUtf(requestData['clip'])
         overwrites = requestData['overwrites'] if 'overwrites' in requestData else 0
         georefProcess = Georeferenzierungsprozess(
             messtischblattid = requestData['mapObj'].apsobjectid,
             nutzerid = requestData['userid'],
             georefparams = ast.literal_eval(georefParam),
-            clipparameter = georefParam,
             timestamp = timestamp,
             isactive = False,
             type = requestData['type'],
             overwrites = overwrites,
-            clippolygon = ast.literal_eval(clipParam),
             adminvalidation = '',
             processed = False,
             mapid =  requestData['mapObj'].id,
@@ -68,6 +69,10 @@ def georeferenceConfirm(request):
 
         request.db.add(georefProcess)
         request.db.flush()
+
+        # add polygon
+        polygonAsString = convertListToPostgisString(clipParam['polygon'], 'POLYGON')
+        georefProcess.setClip(polygonAsString, stripSRIDFromEPSG(clipParam['source']), request.db)
 
         LOGGER.debug('Create response ...')
         # @TODO has to be updated

@@ -63,7 +63,7 @@ def getSpecificGeoreferenceData(georefObj, mapObj, srid,  dbsession):
     }
     if georefObj.clip is not None:
         params['clippolygon'] = {
-            'target': georefObj.getSRIDClip(dbsession),
+            'source': 'EPSG:%s'%georefObj.getSRIDClip(dbsession),
             'polygon': convertPostgisStringToList(georefObj.clip)
         }
     return params

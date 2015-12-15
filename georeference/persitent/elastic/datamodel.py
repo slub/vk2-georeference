@@ -4,9 +4,6 @@ Created on May 11, 2015
 @author: mendt
 '''
 import os
-import gdal
-from pyproj import Proj
-from pyproj import transform
 from georeference.settings import ELASTICSEARCH_SRS
 from georeference.settings import DIRECTORY_TYPE_MAPPING
 from georeference.settings import GEOREFERENCE_PERSITENT_TMS_URL
@@ -15,8 +12,8 @@ from georeference.settings import PERMALINK_RESOLVER
 from georeference.settings import TEMPLATE_OGC_SERVICE_LINK
 from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.tools import getImageSize
-from georeference.utils.process.georeferencer import transformClipPolygon
-from georeference.utils.parser.georeferenceparser import parseGcps
+from georeference.utils.process.tools import convertPostgisStringToList
+from georeference.utils.process.tools import stripSRIDFromEPSG
 
 def createSearchRecord(mapObj, dbsession, logger, georefObj=None):
     """ Function creates an elasticsearch record for a given mapObj
@@ -83,38 +80,9 @@ def createSearchRecord(mapObj, dbsession, logger, georefObj=None):
         mapData[oai]["tms"] = tmsUrl
 
     if georefObj is not None:
-        transformedClipPolygon = getTransformedClipPolygon(mapObj, georefObj, logger)
-        mapData[oai]["clippolygon"] = transformedClipPolygon
+        mapData[oai]["clippolygon"] = convertPostgisStringToList(georefObj.getClipAsString(dbsession, stripSRIDFromEPSG(ELASTICSEARCH_SRS.lower())))
 
-    return mapData   
-
-def getTransformedClipPolygon(mapObj, georefObj, logger=None):
-    """ Function gets a transformed clip polygon for a given parameter set
-
-    :type mapObj: vkviewer.python.models.vkdb.Map
-    :type georefObj: georeference.models.vkdb.georeferenzierungsprozess.Georeferenzierungsprozess
-    :type logger: logging.Logger|None """
-    polygon = georefObj.clippolygon['polygon']
-    gcps = parseGcps(georefObj.georefparams['gcps'])
-    srid = georefObj.georefparams['target']
-
-    # generate a transformed clip polygon based on the georeference
-    # parameter and an affine transformation
-    geoTransform = gdal.GCPsToGeoTransform(gcps)
-    transformedClipPolygon = transformClipPolygon(polygon, geoTransform)
-
-    # check if the clip polygon has to reproject to the elasticsearch srs (Default is 4326)
-    if srid.lower() != ELASTICSEARCH_SRS.lower():
-        transformPolygonInTargetSRS = []
-        inProj = Proj(init=srid.lower())
-        outProj = Proj(init=ELASTICSEARCH_SRS.lower())
-        for record in transformedClipPolygon:
-            x, y = transform(inProj,outProj,record[0],record[1])
-            transformPolygonInTargetSRS.append([x,y])
-        transformedClipPolygon = transformPolygonInTargetSRS
-
-    return transformedClipPolygon
-
+    return mapData
 
 def getOnlineResourceData(mapObj, metadataObj, time, oai, dbsession):    
     """ Function creates a list of online resource records 

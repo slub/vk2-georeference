@@ -67,13 +67,8 @@ def georeferenceValidation(request):
         # calculate validation result
         wmsUrl = createValidationResult(requestParams, gcps, georefTargetSRS, LOGGER)
 
-        # if the given clip polygon is given as pixel coordinates transform it
-        # yet this transformation does only support an affine transformation
-        clipPolygon =  transformClipPolygon(requestParams['clip']['polygon'], gdal.GCPsToGeoTransform(gcps)) if requestParams['clip']['source'] == 'pixel' else requestParams['clip']['polygon']
-
         LOGGER.debug('Create response ...')
-        clip ={'polygon': clipPolygon, 'source': requestParams['georeference']['target']}
-        response = {'wmsUrl':wmsUrl,'layerId':requestParams['mapObj'].apsdateiname,'clip':clip}
+        response = {'wmsUrl':wmsUrl,'layerId':requestParams['mapObj'].apsdateiname}
         return response
 
     except ParameterException as e:
@@ -94,19 +89,16 @@ def createValidationResult(requestParams, gcps, gcpstargetSrs, LOGGER):
     :type LOGGER: logging.LOGGER
     :return: str
     :raise: vkviewer.python.georef.georeferenceexceptions.ParameterException """
-    LOGGER.debug('Parse and validate clip params ...')
-    clipParams = parseClipPolygon(requestParams['clip']['polygon'])
-
     LOGGER.debug('Process georeference result ...')
     tmpFile = os.path.join(GEOREFERENCE_MAPFILE_FOLDER,requestParams['mapObj'].apsdateiname+"::"+str(uuid.uuid4())+".tif")
     destPath = None
     if requestParams['georeference']['algorithm'] == 'affine':
         destPath = rectifyImageAffine(requestParams['mapObj'].originalimage, tmpFile,
-                clipParams, gcps, gcpstargetSrs, LOGGER)
+                [], gcps, gcpstargetSrs, LOGGER)
     elif requestParams['georeference']['algorithm'] == 'polynom':
-        destPath = rectifyPolynom(requestParams['mapObj'].originalimage, tmpFile, clipParams, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
+        destPath = rectifyPolynom(requestParams['mapObj'].originalimage, tmpFile, [], gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     elif requestParams['georeference']['algorithm'] == 'tps':
-        destPath = rectifyTps(requestParams['mapObj'].originalimage, tmpFile, clipParams, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
+        destPath = rectifyTps(requestParams['mapObj'].originalimage, tmpFile, [], gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     else:
         raise ParameterException('Transformation algorithm - %s - is not supported yet.'%requestParams['georeference']['algorithm'])
 

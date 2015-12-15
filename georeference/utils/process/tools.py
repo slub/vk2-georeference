@@ -4,7 +4,7 @@ from gdal import GA_ReadOnly
 
 def convertPostgisStringToList(string):
     """ Converts a postgis string to a list of coordinates
-    :param string: String
+    :type str: String
     :return: list|None
     """
     if 'POLYGON' in string:
@@ -17,6 +17,23 @@ def convertPostgisStringToList(string):
             coordinates.append([float(coordinate[0]), float(coordinate[1])])
         return coordinates
     return None
+
+def convertListToPostgisString(coordinates, type):
+    """ Converts a list of coordinates to a postgis string
+    :type list: coordinates
+    :type str: String
+    :return: str
+    """
+    string = ''
+    if type == 'POLYGON':
+        string = 'POLYGON((%s))'
+
+    coordinatesAsString = []
+    for coordinate in coordinates:
+        coordinatesAsString.append('%s %s'%(coordinate[0], coordinate[1]))
+
+    return string % ','.join(coordinatesAsString)
+
 def extractSRIDFromDataset(dataset):
     """ Extracts the srid from a given dataset.
 

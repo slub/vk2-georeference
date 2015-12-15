@@ -22,11 +22,7 @@ class GeoreferenceValidationTest(BaseTestCase):
                         {'source': [258, 7471], 'target': [10.6666660308838, 51.2999992370605]}
                     ]
                 }, 
-            'id': 10002567,
-            'clip': {
-                'source':'pixel',
-                'polygon': [[467, 923],[7281, 999],[7224, 7432],[258, 7471],[467, 923]]
-            }
+            'id': 10002567
         }
         
         # add testdata to database
@@ -62,7 +58,6 @@ class GeoreferenceValidationTest(BaseTestCase):
         self.assertTrue('layerId' in response, 'Missing parameter layer_id ....')
         self.assertEqual('df_dk_0010001_4630_1928', response['layerId'], 'Wrong parameter for layer_id ...')
         self.assertTrue('wmsUrl' in response, 'Wrong parameter for wms_url ...')
-        self.assertTrue('clip' in response, 'Wrong parameter for extent ...')
         
     def testGetGeorefValidationForTPS(self):
         """ Test if the georeferenceValidation response a valid result with an tps transformation. """
@@ -80,7 +75,6 @@ class GeoreferenceValidationTest(BaseTestCase):
         self.assertTrue('layerId' in response, 'Missing parameter layer_id ....')
         self.assertEqual('df_dk_0010001_4630_1928', response['layerId'], 'Wrong parameter for layer_id ...')
         self.assertTrue('wmsUrl' in response, 'Wrong parameter for wms_url ...')
-        self.assertTrue('clip' in response, 'Wrong parameter for extent ...')
         
     def testGetGeorefValidationForPolynom(self):
         """ Test if the georeferenceValidation response a valid result with an polynom transformation. """
@@ -98,7 +92,6 @@ class GeoreferenceValidationTest(BaseTestCase):
         self.assertTrue('layerId' in response, 'Missing parameter layer_id ....')
         self.assertEqual('df_dk_0010001_4630_1928', response['layerId'], 'Wrong parameter for layer_id ...')
         self.assertTrue('wmsUrl' in response, 'Wrong parameter for wms_url ...')
-        self.assertTrue('clip' in response, 'Wrong parameter for extent ...')
         
     def testGeoreferenceValidation_correctFail(self):
         
@@ -124,11 +117,7 @@ class GeoreferenceValidationTest(BaseTestCase):
                 'target': 'EPSG:4314', 
                 'gcps': []
             }, 
-            'id': 10002567,
-            'clip': {
-                'source':'pixel',
-                'polygon': []
-            }
+            'id': 10002567
         }
         request = self.getPOSTRequest(params)
         self.assertRaises(HTTPBadRequest, georeferenceValidation, request)
@@ -145,11 +134,7 @@ class GeoreferenceValidationTest(BaseTestCase):
                 'target': 'EPSG:4314', 
                 'gcps': []
             }, 
-            'id': 10002567,
-            'clip': {
-                'source':'pixel',
-                'polygon': None
-            }
+            'id': 10002567
         }
         request = self.getPOSTRequest(params)
         self.assertRaises(HTTPBadRequest, georeferenceValidation, request)

@@ -53,8 +53,6 @@ def parseGeoreferenceParamsFromRequest(request):
             raise ParameterException("Missing id field in process request.")
         if not 'georeference' in params:
             raise ParameterException("Missing process field in process request.")
-        if not 'clip' in params:
-            raise ParameterException("Missing clip field in process request.")
         return True
 
     requestParams = None

@@ -117,32 +117,14 @@ class Georeferenzierungsprozess(Base):
         return session.query(Georeferenzierungsprozess).filter(Georeferenzierungsprozess.mapid == mapId)\
             .filter(Georeferenzierungsprozess.isactive == True).first()
 
-    # def getClip(self, dbsession, srid):
-    #     """ Function returns the parsed clip.
-    #
-    #     :type sqlalchemy.orm.session.Session: dbsession
-    #     :type int: srid
-    #     :return: list """
-    #     extent = self.getExtentAsString(dbsession, srid).split(',')
-    #     extentAsList = []
-    #     for i in range(0,len(extent)):
-    #         extentAsList.append(float(extent[i]))
-    #     return extentAsList
+    def getClipAsString(self, dbsession, srid=4326):
+        """ Function returns the clip as a string.
 
-    # def getClipAsString(self, dbsession, srid):
-    #     """ Function returns the clip as a string.
-    #
-    #     :type sqlalchemy.orm.session.Session: dbsession
-    #     :type int: srid
-    #     :return: string """
-    #     georefSRIDClip = self.getSRIDClip(dbsession)
-    #     if srid == -1 or georefSRIDClip == -1:
-    #         # It is not possible to transform a geometry with missing coordinate information
-    #         query = 'SELECT st_extent(boundingbox) FROM map WHERE id = :id;'
-    #     else:
-    #         query = 'SELECT st_extent(st_transform(boundingbox, :srid)) FROM map WHERE id = :id;'
-    #     pg_extent = dbsession.execute(query,{'id':self.id, 'srid':srid}).fetchone()[0]
-    #     return pg_extent.replace(' ',',')[4:-1]
+        :type sqlalchemy.orm.session.Session: dbsession
+        :type int: srid (Default: 4326)
+        :return: string """
+        query = 'SELECT st_astext(st_transform(clip, :srid)) FROM georeferenzierungsprozess WHERE id = :id;'
+        return dbsession.execute(query,{'id':self.id, 'srid':srid}).fetchone()[0]
 
     def getSRIDClip(self, dbsession):
         """ queries srid code for the georeferenzierungsprozess object

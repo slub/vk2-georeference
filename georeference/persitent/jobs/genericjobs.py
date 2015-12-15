@@ -7,7 +7,7 @@ Created on 05.08.15
 @author: mendt
 '''
 import os
-import ast
+import uuid
 from os import path
 from georeference.settings import DIRECTORY_TYPE_MAPPING
 from georeference.settings import DBCONFIG_PARAMS
@@ -22,9 +22,11 @@ from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.parser.georeferenceparser import parseGcps
 from georeference.utils.parser.georeferenceparser import parseClipPolygon
 from georeference.utils.process.georeferencer import addOverviews
+from georeference.utils.process.georeferencer import createClipShapefile
 from georeference.utils.process.georeferencer import rectifyImageAffine
 from georeference.utils.process.georeferencer import rectifyTps
 from georeference.utils.process.georeferencer import rectifyPolynom
+from georeference.utils.process.tools import convertPostgisStringToList
 from georeference.utils.process.tools import stripSRIDFromEPSG
 from georeference.scripts.updatetms import buildTMSCache
 from georeference.scripts.updatevrt import updateVirtualdatasetForTimestamp
@@ -34,27 +36,33 @@ from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
 
 # from georeference.binding.wms import pushMapObjToWmsDatabaseIndex
 
-def processGeorefImage(mapObj, georefObj, logger):
+def processGeorefImage(mapObj, georefObj, dbsession, logger):
     """ Function process a persistent georeference image
 
     :type georeference.models.vkdb.map.Map: mapObj
     :type georeference.models.vkdb.georeferenzierungsprozess.Georeferenzierungsprozess: georefObj
+    :type sqlalchemy.orm.session.Session: dbsession
     :type logging.Logger: logger
     :return: str """
-    clipParams = parseClipPolygon(georefObj.clippolygon['polygon'])
     gcps = parseGcps(georefObj.georefparams['gcps'])
     georefTargetSRS = stripSRIDFromEPSG(georefObj.georefparams['target'])
     targetPath = os.path.join(GEOREFERENCE_PERSITENT_TARGETDIR, mapObj.apsdateiname+'.tif')
     transformationAlgorithm = georefObj.georefparams['algorithm'] if 'algorithm' in georefObj.georefparams else 'affine'
     destPath = None
 
+    # create clip shape if exists
+    clipShpPath = None
+    if georefObj.clip is not None:
+        clipShpPath = os.path.join(TMP_DIR, '%s' % uuid.uuid4())
+        clipShpPath = createClipShapefile(convertPostgisStringToList(georefObj.clip), clipShpPath, georefObj.getSRIDClip(dbsession))
+
     logger.debug('Process georeference result ...')
     if transformationAlgorithm == 'affine':
-        destPath = rectifyImageAffine(mapObj.originalimage, targetPath, clipParams, gcps, georefTargetSRS, logger)
+        destPath = rectifyPolynom(mapObj.originalimage, targetPath, [], gcps, georefTargetSRS, logger, TMP_DIR, clipShpPath, order=1)
     elif transformationAlgorithm == 'polynom':
-        destPath = rectifyPolynom(mapObj.originalimage, targetPath, clipParams, gcps, georefTargetSRS, logger, TMP_DIR)
+        destPath = rectifyPolynom(mapObj.originalimage, targetPath, [], gcps, georefTargetSRS, logger, TMP_DIR, clipShpPath)
     elif transformationAlgorithm == 'tps':
-        destPath = rectifyTps(mapObj.originalimage, targetPath, clipParams, gcps, georefTargetSRS, logger, TMP_DIR)
+        destPath = rectifyTps(mapObj.originalimage, targetPath, [], gcps, georefTargetSRS, logger, TMP_DIR, clipShpPath)
 
     logger.debug('Add overviews to the image ...')
     addOverviews(destPath, '2 4 8 16 32', logger)

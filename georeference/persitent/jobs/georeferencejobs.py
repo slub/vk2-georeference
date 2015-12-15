@@ -26,7 +26,7 @@ def activate(georefObj, mapObj, dbsession, logger):
     logger.debug('Activate georeference process with id %s ...'%georefObj.id)
 
     logger.debug('Create persistent georeference result ...')
-    destPath = processGeorefImage(mapObj, georefObj, logger)
+    destPath = processGeorefImage(mapObj, georefObj, dbsession, logger)
 
     # check if the georeferencing was run correctly
     if destPath is None:
