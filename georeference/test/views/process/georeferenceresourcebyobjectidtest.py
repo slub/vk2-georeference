@@ -92,14 +92,7 @@ class GeoreferenceResourceByObjectIdTest(BaseTestCase):
         response = getByObjectId(request)
          
         print "Response - %s"%response
-                 
-        self.assertTrue("process" in response, "Missing key/value in response ...")
-        self.assertTrue("source" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("target" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("algorithm" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("gcps" in response["process"], "Missing key/value in response ...")
-        self.assertEqual(response["process"]["gcps"][0]["source"], [], "Response has is not an empty list ...")
-        self.assertTrue("extent" in response, "Missing key/value in response ...")
+
         self.assertTrue("objectid" in response, "Missing key/value in response ...")
         self.assertTrue("timestamp" in response, "Missing key/value in response ...")
         self.assertTrue("type" in response, "Missing key/value in response ...")
@@ -122,14 +115,7 @@ class GeoreferenceResourceByObjectIdTest(BaseTestCase):
         response = getByObjectId(request)
          
         print "Response - %s"%response
-                 
-        self.assertTrue("process" in response, "Missing key/value in response ...")
-        self.assertTrue("source" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("target" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("algorithm" in response["process"], "Missing key/value in response ...")
-        self.assertTrue("gcps" in response["process"], "Missing key/value in response ...")
-        self.assertEqual(response["process"]["gcps"][0]["source"], [], "Response has is not an empty list ...")
-        self.assertTrue("extent" in response, "Missing key/value in response ...")
+
         self.assertTrue("objectid" in response, "Missing key/value in response ...")
         self.assertTrue("timestamp" in response, "Missing key/value in response ...")
         self.assertTrue("type" in response, "Missing key/value in response ...")
@@ -154,9 +140,7 @@ class GeoreferenceResourceByObjectIdTest(BaseTestCase):
         
          
         print "Response - %s"%response
-                 
-        self.assertTrue("process" not in response, "Not allowed key/value in response ...")
-        self.assertTrue("extent" not in response, "Not allowed key/value in response ...")
+
         self.assertTrue("objectid" in response, "Missing key/value in response ...")
         self.assertTrue("timestamp" in response, "Missing key/value in response ...")
         self.assertTrue("type" in response, "Missing key/value in response ...")

@@ -15,8 +15,9 @@ import os
 import unittest
 import gdal
 from gdal import GA_ReadOnly
-from georeference.utils.process.tools import getBoundsFromDataset
+from georeference.utils.process.tools import convertPostgisStringToList
 from georeference.utils.process.tools import extractSRIDFromDataset
+from georeference.utils.process.tools import getBoundsFromDataset
 
 class ToolsTest(unittest.TestCase):
 
@@ -55,6 +56,15 @@ class ToolsTest(unittest.TestCase):
 
         del dataset
 
+    def testConvertPostgisStringToList(self):
+        response = convertPostgisStringToList('POLYGON((16.9999980926514 51.7999992370605,16.9999980926514 51.9000015258789,17.1666679382324 51.9000015258789,17.1666679382324 51.7999992370605,16.9999980926514 51.7999992370605))')
+
+        print '====================='
+        print 'Test if testConvertPostgisStringToList ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertTrue(len(response) == 5)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

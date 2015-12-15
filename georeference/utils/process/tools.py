@@ -2,6 +2,21 @@ import osgeo.osr as osr
 import gdal
 from gdal import GA_ReadOnly
 
+def convertPostgisStringToList(string):
+    """ Converts a postgis string to a list of coordinates
+    :param string: String
+    :return: list|None
+    """
+    if 'POLYGON' in string:
+        coordinates = []
+        stripPolygon = string.split('POLYGON')[1]
+        stripBraces = stripPolygon[2:-2]
+        splitCoordinates = stripBraces.split(',')
+        for splitCoordinate in splitCoordinates:
+            coordinate = splitCoordinate.split(' ')
+            coordinates.append([float(coordinate[0]), float(coordinate[1])])
+        return coordinates
+    return None
 def extractSRIDFromDataset(dataset):
     """ Extracts the srid from a given dataset.
 

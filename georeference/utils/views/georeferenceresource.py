@@ -7,9 +7,9 @@ Created on 04.08.15
 @author: mendt
 '''
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
-from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.exceptions import ProcessIsInvalideException
+from georeference.utils.process.tools import convertPostgisStringToList
 
 def checkIfPendingProcessesExist(mapObj, request):
     """ Checks if there are process in the database which are not yet processed and
@@ -46,24 +46,25 @@ def getGeneralMetadata(mapObj, request):
         }
     }
 
-def getSpecificGeoreferenceData(georefProcessObj, mapObj, srid,  dbsession):
+def getSpecificGeoreferenceData(georefObj, mapObj, srid,  dbsession):
     """ Query the specific process information for a process response.
 
-    :type mapObj: vkviewer.python.models.vkdb.Georeferenzierungsprozess
+    :type georefObj: georeference.models.vkdb.georeferenzierungsprozess.Georeferenzierungsprozess
     :type mapObj: georeference.models.vkdb.map.Map
     :type srid: str
     :type sqlalchemy.orm.session.Session: dbsession
     :return: dict """
     params = {
         'extent': mapObj.getExtent(dbsession, srid),
-        'georeference': georefProcessObj.georefparams,
-        'timestamp': str(georefProcessObj.timestamp),
+        'georeference': georefObj.georefparams,
+        'timestamp': str(georefObj.timestamp),
         'type': 'update',
-        'georeferenceid': georefProcessObj.id
+        'georeferenceid': georefObj.id
     }
-    if len(georefProcessObj.clippolygon['polygon']) == 0:
-        return params
-    else:
-        params['clip'] = georefProcessObj.clippolygon
-        return params
+    if georefObj.clip is not None:
+        params['clippolygon'] = {
+            'target': georefObj.getSRIDClip(dbsession),
+            'polygon': convertPostgisStringToList(georefObj.clip)
+        }
+    return params
 

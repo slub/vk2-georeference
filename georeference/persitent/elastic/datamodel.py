@@ -88,12 +88,12 @@ def createSearchRecord(mapObj, dbsession, logger, georefObj=None):
 
     return mapData   
 
-def getTransformedClipPolygon(mapObj, georefObj, logger):
+def getTransformedClipPolygon(mapObj, georefObj, logger=None):
     """ Function gets a transformed clip polygon for a given parameter set
 
     :type mapObj: vkviewer.python.models.vkdb.Map
     :type georefObj: georeference.models.vkdb.georeferenzierungsprozess.Georeferenzierungsprozess
-    :type logger: logging.Logger """
+    :type logger: logging.Logger|None """
     polygon = georefObj.clippolygon['polygon']
     gcps = parseGcps(georefObj.georefparams['gcps'])
     srid = georefObj.georefparams['target']

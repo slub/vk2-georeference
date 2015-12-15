@@ -21,6 +21,7 @@ production.ini
 !/georeference/test/test-data/test-ak.jpg
 !/georeference/test/test-data/df_dk_0010001_4630_1928.tif
 !/georeference/test/test-data/test-mtb.tif
+!/georeference/test/test-data/test-mtb-georef.tif
 
 # build files
 /build

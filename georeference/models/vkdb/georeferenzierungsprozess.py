@@ -8,6 +8,7 @@ Created on Jul 2, 2015
 '''
 import json
 from georeference.models.meta import Base
+from georeference.models.vkdb.geometry import Geometry
 from georeference.utils.exceptions import ProcessIsInvalideException
 
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, desc, asc, PickleType
@@ -34,6 +35,7 @@ class Georeferenzierungsprozess(Base):
     comment = Column(String(255))
     algorithm = Column(String(255))
     clippolygon = Column(JsonPickleType(pickler=json))
+    clip = Column(Geometry)
     
     @classmethod
     def all(cls, session):
@@ -115,6 +117,43 @@ class Georeferenzierungsprozess(Base):
         return session.query(Georeferenzierungsprozess).filter(Georeferenzierungsprozess.mapid == mapId)\
             .filter(Georeferenzierungsprozess.isactive == True).first()
 
+    # def getClip(self, dbsession, srid):
+    #     """ Function returns the parsed clip.
+    #
+    #     :type sqlalchemy.orm.session.Session: dbsession
+    #     :type int: srid
+    #     :return: list """
+    #     extent = self.getExtentAsString(dbsession, srid).split(',')
+    #     extentAsList = []
+    #     for i in range(0,len(extent)):
+    #         extentAsList.append(float(extent[i]))
+    #     return extentAsList
+
+    # def getClipAsString(self, dbsession, srid):
+    #     """ Function returns the clip as a string.
+    #
+    #     :type sqlalchemy.orm.session.Session: dbsession
+    #     :type int: srid
+    #     :return: string """
+    #     georefSRIDClip = self.getSRIDClip(dbsession)
+    #     if srid == -1 or georefSRIDClip == -1:
+    #         # It is not possible to transform a geometry with missing coordinate information
+    #         query = 'SELECT st_extent(boundingbox) FROM map WHERE id = :id;'
+    #     else:
+    #         query = 'SELECT st_extent(st_transform(boundingbox, :srid)) FROM map WHERE id = :id;'
+    #     pg_extent = dbsession.execute(query,{'id':self.id, 'srid':srid}).fetchone()[0]
+    #     return pg_extent.replace(' ',',')[4:-1]
+
+    def getSRIDClip(self, dbsession):
+        """ queries srid code for the georeferenzierungsprozess object
+        :type sqlalchemy.orm.session.Session: dbsession
+        :return:_ int|None """
+        query = "SELECT st_srid(clip) FROM georeferenzierungsprozess WHERE id = %s"%self.id
+        response = dbsession.execute(query).fetchone()
+        if response is not None:
+            return response[0]
+        return None
+
     @classmethod
     def getUnprocessedObjectsOfTypeNew(cls, session):
         """ Gives back all process process of type "new" which are unprocessed. Important is the distinct operatore, which
@@ -150,6 +189,15 @@ class Georeferenzierungsprozess(Base):
         """
         self.processed = True
         self.isactive = True
+
+    def setClip(self, geomAsText, srid, dbsession):
+        """ Set the clip
+        :type str: geomAsText
+        :type int: srid
+        :type sqlalchemy.orm.session.Session: dbsession
+        :return: """
+        query = "UPDATE georeferenzierungsprozess SET clip = ST_GeomFromText('%s', %s) WHERE id = %s"%(geomAsText, srid, self.id)
+        dbsession.execute(query)
 
     def setDeactive(self):
         """ Sets the georeference process to deactive.
