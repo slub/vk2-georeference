@@ -10,6 +10,7 @@ import gdal
 import os
 import traceback
 import uuid
+from gdal import GA_ReadOnly
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.httpexceptions import HTTPInternalServerError
@@ -21,14 +22,13 @@ from georeference.settings import GEOREFERENCE_MAPFILE_TEMPLATE
 from georeference.settings import GEOREFERENCE_MAPFILE_DEFAULT_PARAMS
 from georeference.settings import TMP_DIR
 from georeference.utils.exceptions import ParameterException
-from georeference.utils.parser.georeferenceparser import parseClipPolygon
 from georeference.utils.parser.georeferenceparser import parseGcps
 from georeference.utils.parser.georeferenceparser import parseGeoreferenceParamsFromRequest
-from georeference.utils.process.georeferencer import transformClipPolygon
 from georeference.utils.process.georeferencer import rectifyImageAffine
 from georeference.utils.process.georeferencer import rectifyTps
 from georeference.utils.process.georeferencer import rectifyPolynom
 from georeference.utils.process.mapfile import createMapfile
+from georeference.utils.process.tools import getBoundsFromDataset
 from georeference.utils.process.tools import stripSRIDFromEPSG
 
 ERROR_MSG = "Please check your request parameters or contact the administrator (%s)."%ADMIN_ADDR
@@ -65,11 +65,7 @@ def georeferenceValidation(request):
         gcps = parseGcps(requestParams['georeference']['gcps'])
 
         # calculate validation result
-        wmsUrl = createValidationResult(requestParams, gcps, georefTargetSRS, LOGGER)
-
-        LOGGER.debug('Create response ...')
-        response = {'wmsUrl':wmsUrl,'layerId':requestParams['mapObj'].apsdateiname}
-        return response
+        return createValidationResult(requestParams, gcps, georefTargetSRS, LOGGER)
 
     except ParameterException as e:
         LOGGER.error(e)
@@ -104,4 +100,8 @@ def createValidationResult(requestParams, gcps, gcpstargetSrs, LOGGER):
 
     LOGGER.debug('Create temporary mapfile ...')
     wmsUrl = createMapfile(requestParams['mapObj'].apsdateiname, destPath, gcpstargetSrs, GEOREFERENCE_MAPFILE_TEMPLATE, GEOREFERENCE_MAPFILE_FOLDER, GEOREFERENCE_MAPFILE_DEFAULT_PARAMS)
-    return wmsUrl
+
+    LOGGER.debug('Calculate extent ...')
+    dataset = gdal.Open(destPath, GA_ReadOnly)
+    extent = getBoundsFromDataset(dataset)
+    return {'wmsUrl':wmsUrl,'layerId':requestParams['mapObj'].apsdateiname, 'extent': extent}

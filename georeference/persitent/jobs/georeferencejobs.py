@@ -9,7 +9,6 @@ Created on 05.08.15
 from georeference.settings import TEST_MODE
 from georeference.persitent.jobs.genericjobs import processGeorefImage
 from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
-from georeference.persitent.jobs.genericjobs import removeRecordFromSearchIndex
 from georeference.persitent.jobs.genericjobs import updateMappingServices
 from georeference.utils.exceptions import GeoreferenceProcessingException
 from georeference.utils.process.tools import parseBoundingBoxPolygonFromFile
