@@ -52,7 +52,6 @@ def georeferenceConfirm(request):
         LOGGER.debug('Save georeference parameter in datase ...')
         timestamp = convertTimestampToPostgisString(datetime.now())
         georefParam = str(convertUnicodeDictToUtf(requestData['georeference']))
-        clipParam = convertUnicodeDictToUtf(requestData['clip'])
         overwrites = requestData['overwrites'] if 'overwrites' in requestData else 0
         georefProcess = Georeferenzierungsprozess(
             messtischblattid = requestData['mapObj'].apsobjectid,
@@ -71,8 +70,10 @@ def georeferenceConfirm(request):
         request.db.flush()
 
         # add polygon
-        polygonAsString = convertListToPostgisString(clipParam['polygon'], 'POLYGON')
-        georefProcess.setClip(polygonAsString, stripSRIDFromEPSG(clipParam['source']), request.db)
+        if 'clip' in requestData:
+            clipParam = convertUnicodeDictToUtf(requestData['clip'])
+            polygonAsString = convertListToPostgisString(clipParam['polygon'], 'POLYGON')
+            georefProcess.setClip(polygonAsString, stripSRIDFromEPSG(clipParam['source']), request.db)
 
         LOGGER.debug('Create response ...')
         # @TODO has to be updated

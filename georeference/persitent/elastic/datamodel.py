@@ -79,7 +79,7 @@ def createSearchRecord(mapObj, dbsession, logger, georefObj=None):
         tmsUrl = GEOREFERENCE_PERSITENT_TMS_URL + '/' + os.path.join(subDirectory, file_name)
         mapData[oai]["tms"] = tmsUrl
 
-    if georefObj is not None:
+    if georefObj is not None and georefObj.clip is not None:
         mapData[oai]["clippolygon"] = convertPostgisStringToList(georefObj.getClipAsString(dbsession, stripSRIDFromEPSG(ELASTICSEARCH_SRS.lower())))
 
     return mapData
