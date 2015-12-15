@@ -61,10 +61,17 @@ def getSpecificGeoreferenceData(georefObj, mapObj, srid,  dbsession):
         'type': 'update',
         'georeferenceid': georefObj.id
     }
+
+    # if clip params exist add them
     if georefObj.clip is not None:
         params['clippolygon'] = {
             'source': 'EPSG:%s'%georefObj.getSRIDClip(dbsession),
             'polygon': convertPostgisStringToList(georefObj.clip)
         }
+
+    # check if algorithm is set in georefparams, if not set to default 'affine'
+    if 'algorithm' not in params['georeference']:
+        params['georeference']['algorithm'] = georefObj.algorithm
+
     return params
 
