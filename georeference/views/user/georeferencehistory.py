@@ -54,17 +54,24 @@ def generateGeoreferenceHistory(request):
             metadata = record[1]
             mapObj = record[2]
 
+            #
             # create response
-            boundingbox = mapObj.getExtentAsString(dbsession, 4326)
-            georef_profile.append({'georefid':georef.id, 'mapid':OAI_ID_PATTERN%georef.mapid,
+            #
+            responseRecord = {'georefid':georef.id, 'mapid':OAI_ID_PATTERN%georef.mapid,
                     'georefparams': georef.georefparams, 'time': str(metadata.timepublish), 'transformed': georef.processed,
                     'isvalide': georef.adminvalidation, 'title': metadata.title, 'key': mapObj.apsdateiname,
-                    'georeftime':str(georef.timestamp),'boundingbox':boundingbox,'type':georef.type,
-                    'published':georef.processed, 'thumbnail': metadata.thumbsmid})
+                    'georeftime':str(georef.timestamp),'type':georef.type,
+                    'published':georef.processed, 'thumbnail': metadata.thumbsmid}
+
+            # add boundingbox if exists
+            if mapObj.boundingbox is not None:
+                responseRecord['boundingbox'] = mapObj.getExtentAsString(dbsession, 4326)
 
             # calculate points
             if georef.adminvalidation is not 'invalide':
                 points += 20
+
+            georef_profile.append(responseRecord)
 
         LOGGER.debug('Response: %s'%georef_profile)
 
