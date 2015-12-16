@@ -12,6 +12,7 @@ from pyramid.httpexceptions import HTTPInternalServerError
 from sqlalchemy import desc
 
 from georeference import LOGGER
+from georeference.settings import OAI_ID_PATTERN
 from georeference.utils.exceptions import ParameterException
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
@@ -55,7 +56,7 @@ def generateGeoreferenceHistory(request):
 
             # create response
             boundingbox = mapObj.getExtentAsString(dbsession, 4326)
-            georef_profile.append({'georefid':georef.id, 'mapid':georef.mapid,
+            georef_profile.append({'georefid':georef.id, 'mapid':OAI_ID_PATTERN%georef.mapid,
                     'georefparams': georef.georefparams, 'time': str(metadata.timepublish), 'transformed': georef.processed,
                     'isvalide': georef.adminvalidation, 'title': metadata.title, 'key': mapObj.apsdateiname,
                     'georeftime':str(georef.timestamp),'boundingbox':boundingbox,'type':georef.type,
