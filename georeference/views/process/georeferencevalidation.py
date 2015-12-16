@@ -104,4 +104,5 @@ def createValidationResult(requestParams, gcps, gcpstargetSrs, LOGGER):
     LOGGER.debug('Calculate extent ...')
     dataset = gdal.Open(destPath, GA_ReadOnly)
     extent = getBoundsFromDataset(dataset)
+    LOGGER.debug('Deliver results.')
     return {'wmsUrl':wmsUrl,'layerId':requestParams['mapObj'].apsdateiname, 'extent': extent}
