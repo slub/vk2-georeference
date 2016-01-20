@@ -18,14 +18,6 @@ DBCONFIG_PARAMS = {
     'db':'vkdb'
 }
 
-# For grouping the different map files / sub directories
-DIRECTORY_TYPE_MAPPING = {
-    'M': 'mtb',
-    'A': 'mtb',
-    'TK': 'tk',
-    'GL': 'gl'
-}
-
 # Definition of used srids
 SRC_DICT_WKT = {
     3043:'PROJCS[\"ETRS89 / UTM zone 31N (N-E)\",GEOGCS[\"ETRS89\",DATUM[\"European_Terrestrial_Reference_System_1989\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6258\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4258\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",3],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"3043\"]]',
@@ -94,7 +86,7 @@ GEOREFERENCE_DAEMON_SETTINGS = {
 }
 
 # Georeference TMS Cache url
-GEOREFERENCE_PERSITENT_TMS_URL = 'http://vk2-cdn{s}.slub-dresden.de/tms'
+GEOREFERENCE_PERSITENT_TMS_URL = 'http://vk2-cdn{s}.slub-dresden.de/tms2'
 
 # Target dir where the persitent process maps should be saved
 GEOREFERENCE_PERSITENT_TARGETDIR = '~/mtb_data_ref/'

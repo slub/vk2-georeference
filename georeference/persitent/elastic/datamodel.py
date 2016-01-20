@@ -5,7 +5,6 @@ Created on May 11, 2015
 '''
 import os
 from georeference.settings import ELASTICSEARCH_SRS
-from georeference.settings import DIRECTORY_TYPE_MAPPING
 from georeference.settings import GEOREFERENCE_PERSITENT_TMS_URL
 from georeference.settings import OAI_ID_PATTERN
 from georeference.settings import PERMALINK_RESOLVER
@@ -74,9 +73,8 @@ def createSearchRecord(mapObj, dbsession, logger, georefObj=None):
     # if georeferenced add tms cache
     if mapObj.isttransformiert:
         # create tms url
-        subDirectory = DIRECTORY_TYPE_MAPPING[mapObj.maptype]
         file_name, file_extension = os.path.splitext(os.path.basename(mapObj.georefimage))
-        tmsUrl = GEOREFERENCE_PERSITENT_TMS_URL + '/' + os.path.join(subDirectory, file_name)
+        tmsUrl = GEOREFERENCE_PERSITENT_TMS_URL + '/' + os.path.join(str(mapObj.maptype).lower(), file_name)
         mapData[oai]["tms"] = tmsUrl
 
     if georefObj is not None and georefObj.clip is not None:

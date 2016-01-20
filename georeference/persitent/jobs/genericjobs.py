@@ -6,10 +6,10 @@ Created on 05.08.15
 
 @author: mendt
 '''
-import os
 import uuid
+
+import os
 from os import path
-from georeference.settings import DIRECTORY_TYPE_MAPPING
 from georeference.settings import DBCONFIG_PARAMS
 from georeference.settings import ELASTICSEARCH_INDEX
 from georeference.settings import GEOREFERENCE_PERSITENT_TARGETDIR
@@ -17,13 +17,10 @@ from georeference.settings import GEOREFERENCE_PERSITENT_TMS
 from georeference.settings import GEOREFERENCE_PERSITENT_VRT
 from georeference.settings import OAI_ID_PATTERN
 from georeference.settings import TMP_DIR
-from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.parser.georeferenceparser import parseGcps
-from georeference.utils.parser.georeferenceparser import parseClipPolygon
 from georeference.utils.process.georeferencer import addOverviews
 from georeference.utils.process.georeferencer import createClipShapefile
-from georeference.utils.process.georeferencer import rectifyImageAffine
 from georeference.utils.process.georeferencer import rectifyTps
 from georeference.utils.process.georeferencer import rectifyPolynom
 from georeference.utils.process.tools import convertPostgisStringToList
@@ -33,6 +30,7 @@ from georeference.scripts.updatevrt import updateVirtualdatasetForTimestamp
 from georeference.persitent.elastic.datamodel import createSearchRecord
 from georeference.persitent.elastic.elasticsearch import pushRecordToEs
 from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
+
 
 # from georeference.binding.wms import pushMapObjToWmsDatabaseIndex
 
@@ -46,7 +44,7 @@ def processGeorefImage(mapObj, georefObj, dbsession, logger):
     :return: str """
     gcps = parseGcps(georefObj.georefparams['gcps'])
     georefTargetSRS = stripSRIDFromEPSG(georefObj.georefparams['target'])
-    targetPath = os.path.join(GEOREFERENCE_PERSITENT_TARGETDIR, mapObj.apsdateiname+'.tif')
+    targetPath = os.path.join(GEOREFERENCE_PERSITENT_TARGETDIR, os.path.join(str(mapObj.maptype).lower(), mapObj.apsdateiname+'.tif'))
     transformationAlgorithm = georefObj.georefparams['algorithm'] if 'algorithm' in georefObj.georefparams else 'affine'
     destPath = None
 
@@ -100,9 +98,7 @@ def updateMappingServices(mapObj, destPath, dbsession, logger):
     :type logging.Logger: logger
     :return: str """
     logger.info('Calculating tms cache and vrt...')
-    # get correct path
-    subDirectory = DIRECTORY_TYPE_MAPPING[mapObj.maptype]
-    newTargetDirectory = path.join(GEOREFERENCE_PERSITENT_TMS, subDirectory)
+    newTargetDirectory = path.join(GEOREFERENCE_PERSITENT_TMS, str(mapObj.maptype).lower())
     buildTMSCache(destPath, newTargetDirectory, logger, mapObj.getSRID(dbsession))
 
     if mapObj.maptype == "M":

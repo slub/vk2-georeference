@@ -13,6 +13,10 @@ The deployment of the `vk2-georeference` service was tested on a debian 7 system
 	* cgi-mapserver (6.4.1-2)
 	* imagemagick (8:6.7.7.10)
 	
+### Dependencies on Debian8
+
+	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick
+	
 ## Install python environment	
 	
 All python dependencies could be installed system width, but it is good style to use [python virtual environments](http://docs.python-guide.org/en/latest/dev/virtualenvs/). We therefor use the tool [virtualenv](https://virtualenv.pypa.io/en/latest/). 

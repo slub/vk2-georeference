@@ -23,5 +23,6 @@ if __name__ == '__main__':
     maps = Map.all(dbsession)
 
     for mapObj in maps:
-        georefObj = Georeferenzierungsprozess.getActualGeoreferenceProcessForMapId(mapObj.id, dbsession)
-        pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
+        if mapObj.istaktiv == True:
+            georefObj = Georeferenzierungsprozess.getActualGeoreferenceProcessForMapId(mapObj.id, dbsession)
+            pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
