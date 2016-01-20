@@ -15,6 +15,7 @@ from georeference.models.meta import initializeDb
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
 from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
+from georeference.persitent.jobs.genericjobs import removeRecordFromSearchIndex
 
 if __name__ == '__main__':
     logging.basicConfig()
@@ -26,3 +27,5 @@ if __name__ == '__main__':
         if mapObj.istaktiv == True:
             georefObj = Georeferenzierungsprozess.getActualGeoreferenceProcessForMapId(mapObj.id, dbsession)
             pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
+        else:
+            removeRecordFromSearchIndex(mapObj)

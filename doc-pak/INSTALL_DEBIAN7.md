@@ -12,11 +12,7 @@ The deployment of the `vk2-georeference` service was tested on a debian 7 system
 	* python-imaging (1.1.7-4+deb7u1)
 	* cgi-mapserver (6.4.1-2)
 	* imagemagick (8:6.7.7.10)
-	
-### Dependencies on Debian8
-
-	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick
-	
+		
 ## Install python environment	
 	
 All python dependencies could be installed system width, but it is good style to use [python virtual environments](http://docs.python-guide.org/en/latest/dev/virtualenvs/). We therefor use the tool [virtualenv](https://virtualenv.pypa.io/en/latest/). 
@@ -45,46 +41,14 @@ Now all dependencies have been installed. Because the service relies on a the [P
 	./python_env/bin/python setup.py install (for production)
 	./python_env/bin/python setup.py develop (for development)
 	
-## Use vk2-georeference service with apache2
+***Important*** - Before installing a version please ensure you have create `settings.py` with proper values in the `vk2-georeference/georeference` folder. You can use therefor the `settings.template.py`.
 
-In production mode the service should be run behind an apache2 instance. 	
+## Remove old installation
 
-##' Run vkviewer as a WSGI application over apache. This could be done via `mod_wsgi`. Therefor add the following to your apache virtualhost configuration. For proper running check the settings of the `pyramid.wsgi` in the root folder.
+For removing files from an old project build.
 
-```
-# Use only 1 Python sub-interpreter. Multiple sub-interpreters
-WSGIApplicationGroup %{GLOBAL}
-WSGIPassAuthorization On
-WSGIDaemonProcess pyramid user=www-data group=www-data threads=4 \
-	python-path=~/vk2-georeference/python_env/lib/python2.7/site-packages
-WSGIScriptAlias /georeference ~/vk2-georeference/pyramid.wsgi
-
-<Directory ~/vk2-georeference>
-	WSGIProcessGroup pyramid
-	Order allow,deny
-	Allow from all
-</Directory>
-```
-
-## Clear old installation
-
-In case you wanna clear an old installation of your pyramid application run the following commands:
-
-	rm -r georeference.egg-info/
-	rm -r dist/
-	rm -r build/lib.linux-x86_64-2.7/georeference/
-	rm -r python_env/lib/python2.7/site-packages/georeference-0.0-py2.7.egg/
-	
-## Install georeference DAEMON
-
-The georeference daemon is used for a persistent update of the database. 
-
-The daemon could be started and stoped with:
-
-	python_env/bin/python georeference/persistent/dataupdaterunner.py start/stop
-	
-The settings for the daemon could be found in the:
-
-	georeference/settings.py
-
+	rm -r ./georeference.egg-info/
+	rm -r ./dist/
+	rm -r ./build/lib.linux-x86_64-2.7/georeference/
+	rm -r ./python_env/lib/python2.7/site-packages/georeference-0.0-py2.7.egg/
 

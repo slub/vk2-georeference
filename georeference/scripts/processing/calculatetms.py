@@ -31,6 +31,10 @@ if __name__ == '__main__':
     for mapObj in mapObjs:
         if mapObj.isttransformiert:
             tmsCachePath = os.path.join(DATA_DIRECTORY_TMS, str(mapObj.maptype).lower())
-            buildTMSCache(mapObj.georefimage, tmsCachePath, logger, mapObj.getSRID(dbsession))
+
+            # check if it already exists
+            tmsCachePathComplete = os.path.join(tmsCachePath, mapObj.apsdateiname)
+            if not os.path.exists(tmsCachePathComplete):
+                buildTMSCache(mapObj.georefimage, tmsCachePath, logger, mapObj.getSRID(dbsession))
 
     print 'Finish updating.'
