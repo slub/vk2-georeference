@@ -9,15 +9,10 @@ Created on 05.08.15
 import uuid
 
 import os
-from os import path
-from georeference.settings import DBCONFIG_PARAMS
 from georeference.settings import ELASTICSEARCH_INDEX
 from georeference.settings import GEOREFERENCE_PERSITENT_TARGETDIR
-from georeference.settings import GEOREFERENCE_PERSITENT_TMS
-from georeference.settings import GEOREFERENCE_PERSITENT_VRT
 from georeference.settings import OAI_ID_PATTERN
 from georeference.settings import TMP_DIR
-from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.parser.georeferenceparser import parseGcps
 from georeference.utils.process.georeferencer import addOverviews
 from georeference.utils.process.georeferencer import createClipShapefile
@@ -25,14 +20,9 @@ from georeference.utils.process.georeferencer import rectifyTps
 from georeference.utils.process.georeferencer import rectifyPolynom
 from georeference.utils.process.tools import convertPostgisStringToList
 from georeference.utils.process.tools import stripSRIDFromEPSG
-from georeference.scripts.updatetms import buildTMSCache
-from georeference.scripts.updatevrt import updateVirtualdatasetForTimestamp
 from georeference.persitent.elastic.datamodel import createSearchRecord
 from georeference.persitent.elastic.elasticsearch import pushRecordToEs
 from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
-
-
-# from georeference.binding.wms import pushMapObjToWmsDatabaseIndex
 
 def processGeorefImage(mapObj, georefObj, dbsession, logger):
     """ Function process a persistent georeference image
@@ -88,19 +78,3 @@ def removeRecordFromSearchIndex(mapObj):
     """
     key = OAI_ID_PATTERN%mapObj.id
     deleteRecordFromEsById(key, ELASTICSEARCH_INDEX)
-    
-def updateMappingServices(mapObj, destPath, dbsession, logger):
-    """ Function process a TMS cache for a georeference image and if it is messtischblatt also updates the vrts
-
-    :type georeference.models.vkdb.map.Map: mapObj
-    :type str: destPath
-    :type sqlalchemy.orm.session.Session: dbsession
-    :type logging.Logger: logger
-    :return: str """
-    logger.info('Calculating tms cache and vrt...')
-    newTargetDirectory = path.join(GEOREFERENCE_PERSITENT_TMS, str(mapObj.maptype).lower())
-    buildTMSCache(destPath, newTargetDirectory, logger, mapObj.getSRID(dbsession))
-
-    if mapObj.maptype == "M":
-        metadata = Metadata.by_id(mapObj.id, dbsession)
-        updateVirtualdatasetForTimestamp('%s-01-01 00:00:00'%metadata.timepublish.year, GEOREFERENCE_PERSITENT_VRT, TMP_DIR, DBCONFIG_PARAMS, dbsession, logger)

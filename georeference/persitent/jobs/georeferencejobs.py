@@ -6,13 +6,16 @@ Created on 05.08.15
 
 @author: mendt
 '''
+import os
 from georeference.settings import TEST_MODE
+from georeference.settings import GEOREFERENCE_PERSITENT_TMS
 from georeference.persitent.jobs.genericjobs import processGeorefImage
 from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
-from georeference.persitent.jobs.genericjobs import updateMappingServices
 from georeference.utils.exceptions import GeoreferenceProcessingException
 from georeference.utils.process.tools import parseBoundingBoxPolygonFromFile
 from georeference.utils.process.tools import parseSRIDFromFile
+from georeference.scripts.updatetms import buildTMSCache
+
 
 def activate(georefObj, mapObj, dbsession, logger):
     """ This function activates a georeference process for a mapObj.
@@ -42,8 +45,11 @@ def activate(georefObj, mapObj, dbsession, logger):
     if not TEST_MODE:
         dbsession.commit()
 
-    # update the tms / virtualdatasets
-    updateMappingServices(mapObj, destPath, dbsession, logger)
+    # update the tile map service
+    logger.info('Calculating tms cache ...')
+    newTargetDirectory = os.path.join(GEOREFERENCE_PERSITENT_TMS, str(mapObj.maptype).lower())
+    buildTMSCache(destPath, newTargetDirectory, logger, mapObj.getSRID(dbsession))
+
     # push metadata record to elasticsearch index
     datarecordKey = pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
 

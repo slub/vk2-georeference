@@ -92,7 +92,7 @@ def createValidationResult(requestParams, gcps, gcpstargetSrs, LOGGER):
         destPath = rectifyImageAffine(requestParams['mapObj'].originalimage, tmpFile,
                 [], gcps, gcpstargetSrs, LOGGER)
     elif requestParams['georeference']['algorithm'] == 'polynom':
-        destPath = rectifyPolynomWithVrt(requestParams['mapObj'].originalimage, tmpFile, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
+        destPath = rectifyPolynomWithVRT(requestParams['mapObj'].originalimage, tmpFile, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     elif requestParams['georeference']['algorithm'] == 'tps':
         destPath = rectifyTpsWithVrt(requestParams['mapObj'].originalimage, tmpFile, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     else:

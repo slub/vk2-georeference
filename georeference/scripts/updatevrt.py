@@ -14,7 +14,7 @@
 # *           to the csw service. From this moment on the messtischblätter together with there metadata are 
 # *           available for the users. 
 # * Author:   Jacob Mendt
-# * @todo:    Update georeference datasource
+# * @todo:    Right now the script only works for mapType 'mtb'
 # *
 # * 
 # ******************************************************************************
@@ -92,20 +92,21 @@ def buildCreateVrtCmd(target_path, shapefile_path):
     """
     return "gdalbuildvrt --config GDAL_CACHEMAX 500 -resolution 'highest' -hidenodata -addalpha -overwrite -tileindex \"LOCATION\" %s %s"%(target_path, '%s.shp'%shapefile_path)
 
-def buildCreateShapeTileIndexCmd(timestamp, shp_path, database_params):
+def buildCreateShapeTileIndexCmd(timestamp, shp_path, mapType, database_params):
     """ Create the command for command line processing of a shapefile, which represents
         a tileindex for one timestamp for all historic messtischblaetter.
         
-        Arguments:
-            timestamp {Integer} Time in year
-            shp_path {String}
-            database_params {dict}
-        Returns: {String} """    
-    createShapeTileIndexCmd = "pgsql2shp -f %(shp_path)s -h %(host)s -u %(user)s -P '%(password)s' %(db)s \
+        :type int: timestamp  Time in year
+        :type str: shp_path
+        :type str: layerType
+        :type dict: database_params
+        :returns: str Command for creating a shapefile tileindex """
+    createShapeTileIndexCmd = "pgsql2shp -f %(shp)s -h %(host)s -u %(user)s -P '%(password)s' %(db)s \
     \"SELECT map.boundingbox, map.georefimage as location, metadata.timepublish as time \
-    FROM map, metadata WHERE map.maptype = 'M' AND map.isttransformiert = True AND map.id = metadata.mapid AND EXTRACT('year' from metadata.timepublish) = %(timestamp)s\""
+    FROM map, metadata WHERE lower(map.maptype) = '%(maptype)s' AND map.isttransformiert = True AND map.id = metadata.mapid AND EXTRACT('year' from metadata.timepublish) = %(timestamp)s\""
     return createShapeTileIndexCmd % (dict({
-        'shp_path': shp_path,                                  
+        'shp': shp_path,
+        'maptype': mapType,
         'timestamp': str(timestamp) 
     }.items() + database_params.items()))
 
@@ -124,7 +125,7 @@ def getVirtualDatasetCreateCommands(targetVrtPath, tmp_dir, time, database_param
 
     # collect commands 
     commands = []
-    commands.append(buildCreateShapeTileIndexCmd(time, shpTilePath, database_params))
+    commands.append(buildCreateShapeTileIndexCmd(time, shpTilePath, str('mtb').lower(), database_params))
     commands.append(buildCreateVrtCmd(targetVrtPath, shpTilePath))
     # Comment out for testing purpose (time reduction)
     # commands.append(buildCreateVrtOverviewCmd(targetVrtPath))
