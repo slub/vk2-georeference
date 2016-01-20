@@ -340,7 +340,7 @@ def rectifyImageAffine(srcFile, dstFile, clipPolygon, gcps, srs, logger):
 
     return dstFile
 
-def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp=None, order=None,):
+def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp=None, order=None):
     """ Functions generates clips an image and adds a geotransformation matrix to it
 
     :type srcFile: str
@@ -359,7 +359,16 @@ def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, cli
     try:
         # define tmp file path
         tmpDataName = uuid.uuid4()
+
+        # get projection
+        geoProj = SRC_DICT_WKT[srs]
+        if geoProj is None:
+            raise ValueError("SRS with id - %s - is not supported"%srs)
+
+
+        # save clip results in tif
         tmpFile = os.path.join(tmpDir, '%s.tif'%tmpDataName)
+
 
         logger.debug('Open image ...')
         srcImage = Image.open(srcFile)
@@ -376,9 +385,6 @@ def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, cli
         newDataset = createGeotiff(srcImage, ndarray, offset, tmpFile, logger)
 
         logger.debug('Add gcps to image')
-        geoProj = SRC_DICT_WKT[srs]
-        if geoProj is None:
-            raise ValueError("SRS with id - %s - is not supported"%srs)
         newDataset.SetGCPs(correctGCPOffset(gcps, offset), geoProj)
         newDataset.FlushCache()
 
@@ -415,6 +421,69 @@ def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, cli
     finally:
         if os.path.exists(tmpFile):
             os.remove(tmpFile)
+
+def rectifyPolynomWithVRT(srcFile, dstFile,  gcps, srs, logger, tmpDir, clipShp=None, order=None):
+    """ Functions generates clips an image and adds a geotransformation matrix to it but it uses a vrt
+        for faster processing.
+
+    :type srcFile: str
+    :type dstFile: str
+    :type gcps: List.<gdal.GCP>
+    :type srs: int Right now the function only supports 4314 as spatial reference system
+    :type logger: logging.logger
+    :type tmpDir: str
+    :type clipShp: str (Default: None)
+    :type order: int (Default: None)
+    :return: str
+    :raise: ValueError """
+    tmpFile = None
+    try:
+        # define tmp file path
+        tmpDataName = uuid.uuid4()
+
+        # get projection
+        geoProj = SRC_DICT_WKT[srs]
+        if geoProj is None:
+            raise ValueError("SRS with id - %s - is not supported"%srs)
+
+        # save results in VRT and increase processing speed
+        tmpFile = os.path.join(tmpDir, '%s.vrt'%tmpDataName)
+        newDataset = createVrt(gdal.Open(srcFile, GA_ReadOnly), tmpFile)
+        newDataset.SetGCPs(gcps, geoProj)
+        # newDataset.SetProjection(geoProj)
+        # newDataset.SetGeoTransform(gdal.GCPsToGeoTransform(gcps))
+        newDataset.FlushCache()
+
+        # doing the rectification
+        if os.path.exists(tmpFile):
+            # doing a rectification of an image using a polynomial transformation
+            # and a nearest neighbor resampling method
+            logger.debug('Do georeferencing based on a polynom transformation ...')
+            resampling = 'near'
+            order = order if order in [1,2,3] else None
+            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -wm 500 ' % resampling
+
+            # check if order is described
+            if order is not None:
+                command += '-order %s ' % order
+
+            # check if clip shape is defined
+            if clipShp is not None:
+                command += '-cutline \'%s\' -crop_to_cutline ' % clipShp
+
+            # append source and dest file
+            command += ' %s %s' % (tmpFile, dstFile)
+
+            # run the command
+            subprocess.check_call(command, shell=True)
+        return dstFile
+    except:
+        raise
+    finally:
+        if os.path.exists(tmpFile):
+            os.remove(tmpFile)
+
+        del newDataset
 
 def rectifyTps(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp=None):
     """ Functions generates clips an image and adds a geotransformation matrix to it
@@ -482,6 +551,57 @@ def rectifyTps(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, clipShp
     finally:
         if os.path.exists(tmpFile):
             os.remove(tmpFile)
+
+def rectifyTpsWithVrt(srcFile, dstFile, gcps, srs, logger, tmpDir, clipShp=None):
+    """ Functions generates clips an image and adds a geotransformation matrix to it, but uses for
+        a faster processing a vrt.
+
+    :type srcFile: str
+    :type dstFile: str
+    :type gcps: List.<gdal.GCP>
+    :type srs: int Right now the function only supports 4314 as spatial reference system
+    :type logger: logging.logger
+    :type tmpDir: str
+    :type clipShp: str (Default: None)
+    :return: str
+    :raise: ValueError """
+    tmpFile = None
+    try:
+        # define tmp file path
+        tmpDataName = uuid.uuid4()
+
+        # get projection
+        geoProj = SRC_DICT_WKT[srs]
+        if geoProj is None:
+            raise ValueError("SRS with id - %s - is not supported"%srs)
+
+        # save results in VRT and increase processing speed
+        tmpFile = os.path.join(tmpDir, '%s.vrt'%tmpDataName)
+        newDataset = createVrt(gdal.Open(srcFile, GA_ReadOnly), tmpFile)
+        newDataset.SetGCPs(gcps, geoProj)
+        newDataset.FlushCache()
+
+        # doing the rectification
+        if os.path.exists(tmpFile):
+            logger.debug('Do georeferencing based on a tps transformation ...')
+            resampling = 'near'
+            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -tps -wm 500 ' % resampling
+
+            # check if clip shape is defined
+            if clipShp is not None:
+                command += '-cutline \'%s\' -crop_to_cutline ' % clipShp
+
+            # append source and dest file
+            command += ' %s %s' % (tmpFile, dstFile)
+            subprocess.check_call(command, shell=True)
+        return dstFile
+    except:
+        raise
+    finally:
+        if os.path.exists(tmpFile):
+            os.remove(tmpFile)
+
+        del newDataset
 
 def transformClipPolygon(polygon, geoTransform):
     """ Functions transform the coordinates of a polygon based on an affine transformation. It therefor uses a

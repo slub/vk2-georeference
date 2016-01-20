@@ -25,8 +25,8 @@ from georeference.utils.exceptions import ParameterException
 from georeference.utils.parser.georeferenceparser import parseGcps
 from georeference.utils.parser.georeferenceparser import parseGeoreferenceParamsFromRequest
 from georeference.utils.process.georeferencer import rectifyImageAffine
-from georeference.utils.process.georeferencer import rectifyTps
-from georeference.utils.process.georeferencer import rectifyPolynom
+from georeference.utils.process.georeferencer import rectifyTpsWithVrt
+from georeference.utils.process.georeferencer import rectifyPolynomWithVRT
 from georeference.utils.process.mapfile import createMapfile
 from georeference.utils.process.tools import getBoundsFromDataset
 from georeference.utils.process.tools import stripSRIDFromEPSG
@@ -92,9 +92,9 @@ def createValidationResult(requestParams, gcps, gcpstargetSrs, LOGGER):
         destPath = rectifyImageAffine(requestParams['mapObj'].originalimage, tmpFile,
                 [], gcps, gcpstargetSrs, LOGGER)
     elif requestParams['georeference']['algorithm'] == 'polynom':
-        destPath = rectifyPolynom(requestParams['mapObj'].originalimage, tmpFile, [], gcps, gcpstargetSrs, LOGGER, TMP_DIR)
+        destPath = rectifyPolynomWithVrt(requestParams['mapObj'].originalimage, tmpFile, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     elif requestParams['georeference']['algorithm'] == 'tps':
-        destPath = rectifyTps(requestParams['mapObj'].originalimage, tmpFile, [], gcps, gcpstargetSrs, LOGGER, TMP_DIR)
+        destPath = rectifyTpsWithVrt(requestParams['mapObj'].originalimage, tmpFile, gcps, gcpstargetSrs, LOGGER, TMP_DIR)
     else:
         raise ParameterException('Transformation algorithm - %s - is not supported yet.'%requestParams['georeference']['algorithm'])
 

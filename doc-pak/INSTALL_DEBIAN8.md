@@ -4,7 +4,7 @@ The following installation instructions were tested on a `Debian 8` os.
 
 ## Install system dependencies
 
-	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick python-pyproj
+	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick python-pyproj gdal-bin
 	
 ## Check out the repository
 
@@ -50,3 +50,6 @@ For removing files from an old project build.
 	rm -r ./build/lib.linux-x86_64-2.7/georeference/
 	rm -r ./python_env/lib/python2.7/site-packages/georeference-0.0-py2.7.egg/
 
+## Known Problems
+
+In case of producing validation results, try to save them locally. I-/O-Operations does take the most time of the hole georeference process and writing to NFS is much slower than store them locally.

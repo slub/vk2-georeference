@@ -33,7 +33,9 @@ from georeference.utils.process.georeferencer import createClipShapefile
 from georeference.utils.process.georeferencer import transformClipPolygon
 from georeference.utils.process.georeferencer import rectifyImageAffine
 from georeference.utils.process.georeferencer import rectifyPolynom
+from georeference.utils.process.georeferencer import rectifyPolynomWithVRT
 from georeference.utils.process.georeferencer import rectifyTps
+from georeference.utils.process.georeferencer import rectifyTpsWithVrt
 
 class GeoreferencerTest(unittest.TestCase):
 
@@ -505,7 +507,40 @@ class GeoreferencerTest(unittest.TestCase):
         
         if os.path.exists(destPath):
             os.remove(destPath)
-    
+
+    #@unittest.skip("testRectifyImageAffineForAK")
+    def testRectifyImageAffineForAKWithoutClop(self):
+        destPath = os.path.join(self.dir, 'test-ak-rectified-affine.tif')
+        file = os.path.join(self.dir,'test-ak.jpg')
+        srs = 4314
+        gcps = [
+            gdal.GCP(13.322571166912697, 50.869534359847236, 0, 5473, 6079),
+            gdal.GCP(13.346566162286086, 50.91926655702792, 0, 5670, 5589),
+            gdal.GCP(13.53735995082988, 50.802610870942374, 0, 7020, 6807),
+            gdal.GCP(13.667546305614797, 50.89755275702876, 0, 7812, 5913),
+            gdal.GCP(13.741126714401176, 51.05625639529854, 0, 8338, 4161),
+            gdal.GCP(13.681169234684086, 51.1685499300691, 0, 7942, 2791),
+            gdal.GCP(13.47756543137287, 51.16569220735402, 0, 6609, 2882),
+            gdal.GCP(13.300067220165836, 51.06061124738151, 0, 5102, 4096),
+            gdal.GCP(13.310932518222272, 51.19680951127774, 0, 5295, 2447),
+            gdal.GCP(12.921352950966174, 50.83419856543994, 0, 2536, 6561),
+            gdal.GCP(12.983108161200633, 50.984707383627985, 0, 3048, 5009),
+            gdal.GCP(12.973153769483801, 51.099562229978154, 0, 3091, 3676),
+            gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
+            gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
+        ]
+        response = rectifyImageAffine(file, destPath, [], gcps, srs, self.logger)
+
+        print '====================='
+        print 'Test if testRectifyImageForAK  ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
+
+        if os.path.exists(destPath):
+            os.remove(destPath)
+
     #@unittest.skip("testRectifyImagePolynom1ForMtb")
     def testRectifyImagePolynom1ForMtb(self):
         destPath = os.path.join(self.dir, 'test-mtb-rectified-polynom1.tif')
@@ -552,9 +587,76 @@ class GeoreferencerTest(unittest.TestCase):
          
         self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
         
-#         if os.path.exists(destPath):
-#             os.remove(destPath)  
-     
+        if os.path.exists(destPath):
+            os.remove(destPath)
+
+    #@unittest.skip("testRectifyImagePolynom1ForAKWithoutClip")
+    def testRectifyImagePolynom1ForAKWithoutClip(self):
+        destPath = os.path.join(self.dir, 'test-ak-rectified-polynom1-withoutclip.tif')
+        file = os.path.join(self.dir,'test-ak.jpg')
+        clip = []
+        srs = 4314
+        gcps = [
+            gdal.GCP(13.322571166912697, 50.869534359847236, 0, 5473, 6079),
+            gdal.GCP(13.346566162286086, 50.91926655702792, 0, 5670, 5589),
+            gdal.GCP(13.53735995082988, 50.802610870942374, 0, 7020, 6807),
+            gdal.GCP(13.667546305614797, 50.89755275702876, 0, 7812, 5913),
+            gdal.GCP(13.741126714401176, 51.05625639529854, 0, 8338, 4161),
+            gdal.GCP(13.681169234684086, 51.1685499300691, 0, 7942, 2791),
+            gdal.GCP(13.47756543137287, 51.16569220735402, 0, 6609, 2882),
+            gdal.GCP(13.300067220165836, 51.06061124738151, 0, 5102, 4096),
+            gdal.GCP(13.310932518222272, 51.19680951127774, 0, 5295, 2447),
+            gdal.GCP(12.921352950966174, 50.83419856543994, 0, 2536, 6561),
+            gdal.GCP(12.983108161200633, 50.984707383627985, 0, 3048, 5009),
+            gdal.GCP(12.973153769483801, 51.099562229978154, 0, 3091, 3676),
+            gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
+            gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
+        ]
+        response = rectifyPolynom(file, destPath, clip, gcps, srs, self.logger, self.dir, None, order=1)
+
+        print '====================='
+        print 'Test if testRectifyImagePolynom1ForAKWithoutClip  ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
+
+        # if os.path.exists(destPath):
+        #     os.remove(destPath)
+
+    #@unittest.skip("testRectifyPolynomWithVRTForAKWithoutClip")
+    def testRectifyPolynomWithVRTForAKWithoutClip(self):
+        destPath = os.path.join(self.dir, 'test-ak-rectified-polynom1-withoutclip-vrt.tif')
+        file = os.path.join(self.dir,'test-ak.jpg')
+        srs = 4314
+        gcps = [
+            gdal.GCP(13.322571166912697, 50.869534359847236, 0, 5473, 6079),
+            gdal.GCP(13.346566162286086, 50.91926655702792, 0, 5670, 5589),
+            gdal.GCP(13.53735995082988, 50.802610870942374, 0, 7020, 6807),
+            gdal.GCP(13.667546305614797, 50.89755275702876, 0, 7812, 5913),
+            gdal.GCP(13.741126714401176, 51.05625639529854, 0, 8338, 4161),
+            gdal.GCP(13.681169234684086, 51.1685499300691, 0, 7942, 2791),
+            gdal.GCP(13.47756543137287, 51.16569220735402, 0, 6609, 2882),
+            gdal.GCP(13.300067220165836, 51.06061124738151, 0, 5102, 4096),
+            gdal.GCP(13.310932518222272, 51.19680951127774, 0, 5295, 2447),
+            gdal.GCP(12.921352950966174, 50.83419856543994, 0, 2536, 6561),
+            gdal.GCP(12.983108161200633, 50.984707383627985, 0, 3048, 5009),
+            gdal.GCP(12.973153769483801, 51.099562229978154, 0, 3091, 3676),
+            gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
+            gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
+        ]
+        response = rectifyPolynomWithVRT(file, destPath, gcps, srs, self.logger, self.dir, None, order=1)
+
+        print '====================='
+        print 'Test if testRectifyPolynomWithVRTForAKWithoutClip  ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
+
+        # if os.path.exists(destPath):
+        #     os.remove(destPath)
+
     #@unittest.skip("testRectifyImagePolynom2ForAK")   
     def testRectifyImagePolynom2ForAK(self):
         destPath = os.path.join(self.dir, 'test-ak-rectified-polynom2.tif')
@@ -654,9 +756,75 @@ class GeoreferencerTest(unittest.TestCase):
          
         self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
 
-#         if os.path.exists(destPath):
-#             os.remove(destPath)             
-            
+        # if os.path.exists(destPath):
+        #     os.remove(destPath)
+
+    #@unittest.skip("testRectifyImageTpsForAKWithoutClip")
+    def testRectifyImageTpsForAKWithoutClip(self):
+        destPath = os.path.join(self.dir, 'test-ak-rectified-tps-withoutclip.tif')
+        file = os.path.join(self.dir,'test-ak.jpg')
+        clip = []
+        srs = 4314
+        gcps = [
+            gdal.GCP(13.322571166912697, 50.869534359847236, 0, 5473, 6079),
+            gdal.GCP(13.346566162286086, 50.91926655702792, 0, 5670, 5589),
+            gdal.GCP(13.53735995082988, 50.802610870942374, 0, 7020, 6807),
+            gdal.GCP(13.667546305614797, 50.89755275702876, 0, 7812, 5913),
+            gdal.GCP(13.741126714401176, 51.05625639529854, 0, 8338, 4161),
+            gdal.GCP(13.681169234684086, 51.1685499300691, 0, 7942, 2791),
+            gdal.GCP(13.47756543137287, 51.16569220735402, 0, 6609, 2882),
+            gdal.GCP(13.300067220165836, 51.06061124738151, 0, 5102, 4096),
+            gdal.GCP(13.310932518222272, 51.19680951127774, 0, 5295, 2447),
+            gdal.GCP(12.921352950966174, 50.83419856543994, 0, 2536, 6561),
+            gdal.GCP(12.983108161200633, 50.984707383627985, 0, 3048, 5009),
+            gdal.GCP(12.973153769483801, 51.099562229978154, 0, 3091, 3676),
+            gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
+            gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
+        ]
+        response = rectifyTps(file, destPath, clip, gcps, srs, self.logger, self.dir)
+
+        print '====================='
+        print 'Test if testRectifyImageTpsForAKWithoutClip  ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
+
+        # if os.path.exists(destPath):
+        #     os.remove(destPath)
+
+    #@unittest.skip("testRectifyTpsWithVrtForAKWithoutClip")
+    def testRectifyTpsWithVrtForAKWithoutClip(self):
+        destPath = os.path.join(self.dir, 'test-ak-rectified-tps-withoutclip-vrt.tif')
+        file = os.path.join(self.dir,'test-ak.jpg')
+        srs = 4314
+        gcps = [
+            gdal.GCP(13.322571166912697, 50.869534359847236, 0, 5473, 6079),
+            gdal.GCP(13.346566162286086, 50.91926655702792, 0, 5670, 5589),
+            gdal.GCP(13.53735995082988, 50.802610870942374, 0, 7020, 6807),
+            gdal.GCP(13.667546305614797, 50.89755275702876, 0, 7812, 5913),
+            gdal.GCP(13.741126714401176, 51.05625639529854, 0, 8338, 4161),
+            gdal.GCP(13.681169234684086, 51.1685499300691, 0, 7942, 2791),
+            gdal.GCP(13.47756543137287, 51.16569220735402, 0, 6609, 2882),
+            gdal.GCP(13.300067220165836, 51.06061124738151, 0, 5102, 4096),
+            gdal.GCP(13.310932518222272, 51.19680951127774, 0, 5295, 2447),
+            gdal.GCP(12.921352950966174, 50.83419856543994, 0, 2536, 6561),
+            gdal.GCP(12.983108161200633, 50.984707383627985, 0, 3048, 5009),
+            gdal.GCP(12.973153769483801, 51.099562229978154, 0, 3091, 3676),
+            gdal.GCP(13.119775225375355, 51.12445831286638, 0, 4017, 3228),
+            gdal.GCP(13.124513229340627, 50.97154471762153, 0, 4037, 4961),
+        ]
+        response = rectifyTpsWithVrt(file, destPath, gcps, srs, self.logger, self.dir)
+
+        print '====================='
+        print 'Test if testRectifyTpsWithVrtForAKWithoutClip  ...'
+        print 'Response: %s'%response
+        print '====================='
+
+        self.assertEqual(response, destPath, "Response is not equal to %s"%destPath)
+
+        # if os.path.exists(destPath):
+        #     os.remove(destPath)
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
