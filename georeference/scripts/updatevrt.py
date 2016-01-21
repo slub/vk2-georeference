@@ -155,7 +155,7 @@ def updateVrt( database_params, vrt_target_dir, tmp_dir, logger, dbsession, vrt)
             subprocess.check_call(command, shell = True)
 
         logger.info('Update database state for virtual datasets ...')
-        vrt.setPath(targetPath, dbsession)
+        vrt.setPath(targetPath, 'mtb', dbsession)
 
         return targetPath
     except CalledProcessError as e:
@@ -178,6 +178,7 @@ def updateVirtualdatasetForTimestamp( timestamp, vrt_target_dir, tmp_dir, databa
     vrt = Virtualdataset.by_timestamp(timestamp, dbsession)
     targetPath = updateVrt(database_params, vrt_target_dir, tmp_dir, logger, dbsession, vrt)
     logger.info('Update virtualdataset %s.'%targetPath)
+
 
 
 """ Main """    

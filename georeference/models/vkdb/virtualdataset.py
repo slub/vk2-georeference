@@ -31,10 +31,11 @@ class Virtualdataset(Base):
     def by_timestamp(cls, timestamp, session):
         return session.query(Virtualdataset).filter(Virtualdataset.timestamp == timestamp).first()
 
-    def setPath(self, path, dbsession):
+    def setPath(self, path, maptype, dbsession):
         """ Update the path of the virtualdataset.
 
         :type str: path
+        :type str: maptype
         :type sqlalchemy.orm.session.Session: dbsession
         """
         self.path = path
@@ -42,6 +43,7 @@ class Virtualdataset(Base):
 
         # update bbox
         query = "UPDATE virtualdatasets SET boundingbox = ( SELECT st_setsrid(st_envelope(st_extent(boundingbox)),4314) \
-            FROM (SELECT map.boundingbox as boundingbox, metadata.timepublish as zeit FROM map, metadata WHERE map.maptype = 'M' AND map.isttransformiert = True \
+            FROM (SELECT map.boundingbox as boundingbox, metadata.timepublish as zeit FROM map, metadata WHERE map.maptype = '%s' AND map.isttransformiert = True \
             AND map.id = metadata.mapid AND EXTRACT('year' from metadata.timepublish) = %s) as foo) WHERE id = %s;"
-        dbsession.execute(query%(self.timestamp.year, self.id))
+        dbsession.execute(query % (str(maptype).upper(), self.timestamp.year, self.id))
+

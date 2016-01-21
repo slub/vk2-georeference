@@ -59,3 +59,4 @@ if __name__ == '__main__':
     # update the aggregated layers
     updateMTBLayer(dbsession, logger)
     logger.info('Finish updating aggregated layers.')
+    dbsession.commit()
