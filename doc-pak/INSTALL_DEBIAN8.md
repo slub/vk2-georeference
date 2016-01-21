@@ -52,4 +52,12 @@ For removing files from an old project build.
 
 ## Known Problems
 
-In case of producing validation results, try to save them locally. I-/O-Operations does take the most time of the hole georeference process and writing to NFS is much slower than store them locally.
+* In case of producing validation results, try to save them locally. I-/O-Operations does take the most time of the hole georeference process and writing to NFS is much slower than store them locally. 
+* Add EPSG:900913 to /usr/share/proj/epsg
+
+```
+# Google / OSM
+<900913> +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +over no_defs
+```
+
+
