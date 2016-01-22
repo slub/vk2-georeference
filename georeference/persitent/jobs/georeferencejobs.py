@@ -48,7 +48,7 @@ def activate(georefObj, mapObj, dbsession, logger):
     # update the tile map service
     logger.info('Calculating tms cache ...')
     newTargetDirectory = os.path.join(GEOREFERENCE_PERSITENT_TMS, str(mapObj.maptype).lower())
-    buildTMSCache(destPath, newTargetDirectory, logger, mapObj.getSRID(dbsession))
+    buildTMSCache(destPath, newTargetDirectory, mapObj.getSRID(dbsession))
 
     # push metadata record to elasticsearch index
     datarecordKey = pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)

@@ -19,13 +19,13 @@ def initialize_sql(engine):
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
     
-def initializeDb(sqlalchemy_engine):
-    """ 
-    Creates a session object based on SQLAlchemy
-    :type sqlalchemy_engine: string
-    :return: sqlalchemy.orm.session.Session 
-    """
-    engine = create_engine(sqlalchemy_engine, encoding='utf8', echo=True)
+def initializeDb(sqlalchemy_engine, logging=True):
+    """ Creates a session object based on SQLAlchemy
+
+    :type str: sqlalchemy_engine
+    :type boolean: logging (Default: True)
+    :return: sqlalchemy.orm.session.Session """
+    engine = create_engine(sqlalchemy_engine, encoding='utf8', echo=logging)
     DBSession = sessionmaker(bind=engine)
     initialize_sql(engine)
     return DBSession()
