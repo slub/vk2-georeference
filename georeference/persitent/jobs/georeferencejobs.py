@@ -14,7 +14,7 @@ from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
 from georeference.utils.exceptions import GeoreferenceProcessingException
 from georeference.utils.process.tools import parseBoundingBoxPolygonFromFile
 from georeference.utils.process.tools import parseSRIDFromFile
-from georeference.scripts.updatetms import buildTMSCache
+from georeference.scripts.updatetms import calculateCompressedTMS
 
 
 def activate(georefObj, mapObj, dbsession, logger):
@@ -48,7 +48,7 @@ def activate(georefObj, mapObj, dbsession, logger):
     # update the tile map service
     logger.info('Calculating tms cache ...')
     newTargetDirectory = os.path.join(GEOREFERENCE_PERSITENT_TMS, str(mapObj.maptype).lower())
-    buildTMSCache(destPath, newTargetDirectory, mapObj.getSRID(dbsession))
+    calculateCompressedTMS(destPath, newTargetDirectory, mapObj.getSRID(dbsession))
 
     # push metadata record to elasticsearch index
     datarecordKey = pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
