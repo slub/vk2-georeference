@@ -15,10 +15,10 @@ from georeference.models.vkdb.adminjobs import AdminJobs
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
 from georeference.utils.logger import createLogger
-from georeference.persitent.jobs.basicjobs import setIsValide
-from georeference.persitent.jobs.basicjobs import setInValide
-from georeference.persitent.jobs.georeferencejobs import activate
-from georeference.persitent.jobs.georeferencejobs import deactivate
+from georeference.persistent.jobs.basicjobs import setIsValide
+from georeference.persistent.jobs.basicjobs import setInValide
+from georeference.persistent.jobs.georeferencejobs import activate
+from georeference.persistent.jobs.georeferencejobs import deactivate
 
 def updateDataBasis(dbsession, logger, testing = False):
     """
@@ -57,7 +57,7 @@ def runningAdminJobs(dbsession, logger):
             job.processed = True
 
 def runningNewJobs(dbsession, logger):
-    """ Runs the persitent georeference job for new georeference jobs
+    """ Runs the persistent georeference job for new georeference jobs
 
     :type sqlalchemy.orm.session.Session: dbsession
     :type logging.Logger: logger
@@ -78,7 +78,7 @@ def runningNewJobs(dbsession, logger):
     return counter
 
 def runningUpdateJobs(dbsession, logger):
-    """ Runs the persitent georeference job for update georeference jobs
+    """ Runs the persistent georeference job for update georeference jobs
 
     :type sqlalchemy.orm.session.Session: dbsession
     :type logging.Logger: logger

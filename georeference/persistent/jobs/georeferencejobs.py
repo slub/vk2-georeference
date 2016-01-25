@@ -9,8 +9,8 @@ Created on 05.08.15
 import os
 from georeference.settings import TEST_MODE
 from georeference.settings import GEOREFERENCE_PERSITENT_TMS
-from georeference.persitent.jobs.genericjobs import processGeorefImage
-from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
+from georeference.persistent.jobs.genericjobs import processGeorefImage
+from georeference.persistent.jobs.genericjobs import pushRecordToSearchIndex
 from georeference.utils.exceptions import GeoreferenceProcessingException
 from georeference.utils.process.tools import parseBoundingBoxPolygonFromFile
 from georeference.utils.process.tools import parseSRIDFromFile

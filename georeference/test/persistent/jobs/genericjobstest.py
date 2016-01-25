@@ -17,7 +17,7 @@ from georeference.models.meta import initializeDb
 from georeference.models.meta import getPostgresEngineString
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
-from georeference.persitent.jobs.genericjobs import processGeorefImage
+from georeference.persistent.jobs.genericjobs import processGeorefImage
 from georeference.utils.logger import createLogger
 
 class GernicJobsTest(unittest.TestCase):

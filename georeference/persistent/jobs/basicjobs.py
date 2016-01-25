@@ -8,8 +8,8 @@ Created on 28.08.15
 '''
 from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
-from georeference.persitent.jobs.georeferencejobs import activate
-from georeference.persitent.jobs.georeferencejobs import deactivate
+from georeference.persistent.jobs.georeferencejobs import activate
+from georeference.persistent.jobs.georeferencejobs import deactivate
 
 def getLastValidGeoreferenceProcess(overwritesId, dbsession, logger):
     """ This function goes down the overwrite chain and looks for the last valid

@@ -19,10 +19,10 @@ from georeference.models.meta import getPostgresEngineString
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.metadata import Metadata
-from georeference.persitent.jobs.georeferencejobs import activate
+from georeference.persistent.jobs.georeferencejobs import activate
 from georeference.utils.logger import createLogger
-from georeference.persitent.elastic.elasticsearch import getRecordFromEsById
-from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
+from georeference.persistent.elastic.elasticsearch import getRecordFromEsById
+from georeference.persistent.elastic.elasticsearch import deleteRecordFromEsById
 
 class GeoreferenceJobsTest(unittest.TestCase):
 

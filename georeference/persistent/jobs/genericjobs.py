@@ -20,9 +20,9 @@ from georeference.utils.process.georeferencer import rectifyTps
 from georeference.utils.process.georeferencer import rectifyPolynom
 from georeference.utils.process.tools import convertPostgisStringToList
 from georeference.utils.process.tools import stripSRIDFromEPSG
-from georeference.persitent.elastic.datamodel import createSearchRecord
-from georeference.persitent.elastic.elasticsearch import pushRecordToEs
-from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
+from georeference.persistent.elastic.datamodel import createSearchRecord
+from georeference.persistent.elastic.elasticsearch import pushRecordToEs
+from georeference.persistent.elastic.elasticsearch import deleteRecordFromEsById
 
 def processGeorefImage(mapObj, georefObj, dbsession, logger):
     """ Function process a persistent georeference image

@@ -16,8 +16,8 @@ from georeference.settings import TMP_DIR
 from georeference.models.meta import getPostgresEngineString
 from georeference.models.meta import initializeDb
 from georeference.models.vkdb.map import Map
-from georeference.persitent.binding.wms import pushMapObjToWmsDatabaseIndex
-from georeference.persitent.binding.wms import removeMapObjFromWmsDatabaseIndex
+from georeference.persistent.binding.wms import pushMapObjToWmsDatabaseIndex
+from georeference.persistent.binding.wms import removeMapObjFromWmsDatabaseIndex
 from georeference.scripts.updatevrt import updateVirtualdatasetForTimestamp
 
 

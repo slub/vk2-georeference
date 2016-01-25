@@ -20,7 +20,7 @@ Creates the virtual environement.
 
 Install the main python dependencies in the virtual environment.
 	
-	./python_env/bin/easy_install pyramid SQLAlchemy==1.0.11 psycopg2 pyramid_tm requests python-daemon numpy waitress 
+	./python_env/bin/easy_install pyramid==1.6 SQLAlchemy==1.0.11 psycopg2==2.6.1 pyramid_tm==0.12.1 requests==2.9.1 python-daemon==2.1.0 numpy==1.10.4 waitress==0.8.10 
 		
 Some python libraries depend on C libraries, which can not be installed within a `virtualenv`. This is the case for the `gdal`, `mapscript`, `PIL` and `pyproj` dependencies. They were therefor install system wide (see section `Dependencies`) and linked in the virtual environment.
 

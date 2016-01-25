@@ -13,10 +13,10 @@ from georeference.settings import ELASTICSEARCH_INDEX
 from georeference.models.vkdb.map import Map
 from georeference.models.vkdb.metadata import Metadata
 from georeference.test.basetestcase import BaseTestCase
-from georeference.persitent.elastic.datamodel import createSearchRecord
-from georeference.persitent.elastic.elasticsearch import deleteRecordFromEsById
-from georeference.persitent.elastic.elasticsearch import getRecordFromEsById
-from georeference.persitent.elastic.elasticsearch import pushRecordToEs
+from georeference.persistent.elastic.datamodel import createSearchRecord
+from georeference.persistent.elastic.elasticsearch import deleteRecordFromEsById
+from georeference.persistent.elastic.elasticsearch import getRecordFromEsById
+from georeference.persistent.elastic.elasticsearch import pushRecordToEs
 
 class ElasticsearchTest(BaseTestCase):
     

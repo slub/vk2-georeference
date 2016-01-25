@@ -14,8 +14,8 @@ from georeference.models.meta import getPostgresEngineString
 from georeference.models.meta import initializeDb
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.map import Map
-from georeference.persitent.jobs.genericjobs import pushRecordToSearchIndex
-from georeference.persitent.jobs.genericjobs import removeRecordFromSearchIndex
+from georeference.persistent.jobs.genericjobs import pushRecordToSearchIndex
+from georeference.persistent.jobs.genericjobs import removeRecordFromSearchIndex
 
 if __name__ == '__main__':
     logging.basicConfig()

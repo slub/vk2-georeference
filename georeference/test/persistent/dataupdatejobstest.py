@@ -12,9 +12,9 @@ import time
 from georeference.settings import DBCONFIG_PARAMS_TESTING
 from georeference.models.meta import initializeDb
 from georeference.models.meta import getPostgresEngineString
-from georeference.persitent.dataupdatejobs import runningNewJobs
-from georeference.persitent.dataupdatejobs import runningUpdateJobs
-from georeference.persitent.dataupdatejobs import updateDataBasis
+from georeference.persistent.dataupdatejobs import runningNewJobs
+from georeference.persistent.dataupdatejobs import runningUpdateJobs
+from georeference.persistent.dataupdatejobs import updateDataBasis
 from georeference.utils.logger import createLogger
 
 class DataUpdateJobsTestTest(unittest.TestCase):

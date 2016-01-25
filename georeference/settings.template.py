@@ -64,10 +64,10 @@ GEOREFERENCE_MAPFILE_DEFAULT_PARAMS = {
 }
 
 #
-# Parameter for the georeference persitent / persitent georeferencing
+# Parameter for the georeference persistent / persistent georeferencing
 #
 
-# Settings for logger of the georeference persitent
+# Settings for logger of the georeference persistent
 GEOREFERENCE_DAEMON_LOGGER = {
     'name':'georeferenceupdate',
     'file':'~/tmp/updatedaemon.log',
@@ -75,7 +75,7 @@ GEOREFERENCE_DAEMON_LOGGER = {
     'formatter':'%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 }
 
-# Settings for the georeference persitent
+# Settings for the georeference persistent
 GEOREFERENCE_DAEMON_SETTINGS = {
     'stdin':'~/tmp/null',
     'stdout':'~/tmp/tty',
@@ -88,7 +88,7 @@ GEOREFERENCE_DAEMON_SETTINGS = {
 # Georeference TMS Cache url
 GEOREFERENCE_PERSITENT_TMS_URL = 'http://vk2-cdn{s}.slub-dresden.de/tms2'
 
-# Target dir where the persitent process maps should be saved
+# Target dir where the persistent process maps should be saved
 GEOREFERENCE_PERSITENT_TARGETDIR = '~/mtb_data_ref/'
 
 # Target dir for the tms cache
