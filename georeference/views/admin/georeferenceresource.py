@@ -58,7 +58,7 @@ def adminEvaluationGeoreferenceProcess(request):
         for record in queryData:
             georef = record[0]
             metadata = record[1]
-            response.append({
+            dict = {
                     'georef_id':georef.id,
                     'mapid':georef.mapid,
                     'georef_params': georef.georefparams,
@@ -70,12 +70,16 @@ def adminEvaluationGeoreferenceProcess(request):
                     'georef_time':str(georef.timestamp),
                     'type':georef.type,
                     'userid': georef.nutzerid,
-                    'georef_isactive':georef.isactive,
-                    'clippolygon': {
-                        'source': 'EPSG:%s' % georef.getSRIDClip(request.db),
-                        'polygon': convertPostgisStringToList(georef.clip)
-                    }
-                })
+                    'georef_isactive':georef.isactive
+                }
+
+            if georef.clip is not None:
+                dict['clippolygon'] = {
+                    'source': 'EPSG:%s' % georef.getSRIDClip(request.db),
+                    'polygon': convertPostgisStringToList(georef.clip)
+                }
+
+            response.append(dict)
         return response
     except Exception as e:
         LOGGER.error(e)
