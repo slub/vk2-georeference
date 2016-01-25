@@ -4,10 +4,10 @@ from gdal import GA_ReadOnly
 
 def convertPostgisStringToList(string):
     """ Converts a postgis string to a list of coordinates
-    :type str: String
+    :type str|None: string
     :return: list|None
     """
-    if 'POLYGON' in string:
+    if string is not None and 'POLYGON' in string:
         coordinates = []
         stripPolygon = string.split('POLYGON')[1]
         stripBraces = stripPolygon[2:-2]

@@ -12,6 +12,7 @@ from georeference.settings import OAI_ID_PATTERN
 from georeference.models.vkdb.georeferenzierungsprozess import Georeferenzierungsprozess
 from georeference.models.vkdb.metadata import Metadata
 from georeference.utils.tools import convertUnicodeDictToUtf
+from georeference.utils.process.tools import convertPostgisStringToList
 
 from pyramid.httpexceptions import HTTPInternalServerError
 from pyramid.view import view_config
@@ -59,12 +60,25 @@ def adminEvaluationGeoreferenceProcess(request):
             metadata = record[1]
             # use encoded_georefParams for visualisation as string on the client side
             encoded_georefParams = str(convertUnicodeDictToUtf(georef.georefparams)).replace('\'','"')
-            encoded_clipPolygon = str(convertUnicodeDictToUtf(georef.clippolygon)).replace('\'','"')
-            response.append({'georef_id':georef.id, 'mapid':georef.mapid,
-                'georef_params': encoded_georefParams, 'time': str(metadata.timepublish), 'processed': georef.processed,
-                'adminvalidation': georef.adminvalidation, 'title': metadata.title, 'apsobjectid': georef.messtischblattid,
-                'georef_time':str(georef.timestamp),'type':georef.type, 'userid': georef.nutzerid,
-                'georef_isactive':georef.isactive, 'clippolygon':encoded_clipPolygon})
+            encoded_clipPolygon = str(convertUnicodeDictToUtf(convertPostgisStringToList(georef.clip))).replace('\'','"')
+            response.append({
+                    'georef_id':georef.id,
+                    'mapid':georef.mapid,
+                    'georef_params': encoded_georefParams,
+                    'time': str(metadata.timepublish),
+                    'processed': georef.processed,
+                    'adminvalidation': georef.adminvalidation,
+                    'title': metadata.title,
+                    'apsobjectid': georef.messtischblattid,
+                    'georef_time':str(georef.timestamp),
+                    'type':georef.type,
+                    'userid': georef.nutzerid,
+                    'georef_isactive':georef.isactive,
+                    'clippolygon': {
+                        'source': 'EPSG:%s' % georef.getSRIDClip(request.db),
+                        'polygon': encoded_clipPolygon
+                    }
+                })
         return response
     except Exception as e:
         LOGGER.error(e)
