@@ -58,13 +58,10 @@ def adminEvaluationGeoreferenceProcess(request):
         for record in queryData:
             georef = record[0]
             metadata = record[1]
-            # use encoded_georefParams for visualisation as string on the client side
-            encoded_georefParams = str(convertUnicodeDictToUtf(georef.georefparams)).replace('\'','"')
-            encoded_clipPolygon = str(convertUnicodeDictToUtf(convertPostgisStringToList(georef.clip))).replace('\'','"')
             response.append({
                     'georef_id':georef.id,
                     'mapid':georef.mapid,
-                    'georef_params': encoded_georefParams,
+                    'georef_params': georef.georefparams,
                     'time': str(metadata.timepublish),
                     'processed': georef.processed,
                     'adminvalidation': georef.adminvalidation,
@@ -76,7 +73,7 @@ def adminEvaluationGeoreferenceProcess(request):
                     'georef_isactive':georef.isactive,
                     'clippolygon': {
                         'source': 'EPSG:%s' % georef.getSRIDClip(request.db),
-                        'polygon': encoded_clipPolygon
+                        'polygon': convertPostgisStringToList(georef.clip)
                     }
                 })
         return response
