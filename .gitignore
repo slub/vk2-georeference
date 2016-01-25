@@ -15,7 +15,7 @@
 # configuration files
 development.ini
 production.ini
-# pyramid.wsgi
+pyramid.wsgi
 /georeference/settings.py
 
 # test files
