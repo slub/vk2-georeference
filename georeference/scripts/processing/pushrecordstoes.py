@@ -20,7 +20,7 @@ from georeference.persistent.jobs.genericjobs import removeRecordFromSearchIndex
 if __name__ == '__main__':
     logging.basicConfig()
     logger = logging.getLogger('Push recrords to ES')
-    dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS))
+    dbsession = initializeDb(getPostgresEngineString(DBCONFIG_PARAMS), False)
     maps = Map.all(dbsession)
 
     for mapObj in maps:

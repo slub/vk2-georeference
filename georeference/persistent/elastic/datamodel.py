@@ -119,19 +119,8 @@ def getOnlineResourceData(mapObj, metadataObj, time, oai, dbsession):
                 }),
             'type':'WMS'
         })
-        onlineResList.append({
-            'url':TEMPLATE_OGC_SERVICE_LINK['wms_template']%({
-                'westBoundLongitude':str(extent[0]),
-                'southBoundLatitude':str(extent[2]),
-                'eastBoundLongitude':str(extent[2]),
-                'northBoundLatitude':str(extent[3]),
-                'srid':srid,
-                'time':time,
-                'width':256,
-                'height':256
-            }),
-            'type':'Time-enabled WMS'
-        })
+
+        # append dynamic wms
         if time <= 1900:
             # append normal wcs     
             onlineResList.append({
@@ -140,7 +129,26 @@ def getOnlineResourceData(mapObj, metadataObj, time, oai, dbsession):
                     'service':'WCS'                
                 }),
                 'type':'WCS'
-            })  
+            })
+
+        # append wms for time enabled mtb layer
+        if str(mapObj.maptype).lower() == 'mtb':
+            onlineResList.append({
+                'url':TEMPLATE_OGC_SERVICE_LINK['wms_template']%({
+                    'westBoundLongitude':str(extent[0]),
+                    'southBoundLatitude':str(extent[2]),
+                    'eastBoundLongitude':str(extent[2]),
+                    'northBoundLatitude':str(extent[3]),
+                    'srid':srid,
+                    'time':time,
+                    'width':256,
+                    'height':256
+                }),
+                'type':'Time-enabled WMS'
+            })
+
+        # append wcs for time enabled mtb layer
+        if str(mapObj.maptype).lower() == 'mtb' and time <= 1900:
             # append time-enabled WCS
             onlineResList.append({
                 'url':TEMPLATE_OGC_SERVICE_LINK['wcs_template']%({
