@@ -19,6 +19,7 @@ from georeference.utils.process.tools import convertPostgisStringToList
 from georeference.utils.process.tools import convertListToPostgisString
 from georeference.utils.process.tools import extractSRIDFromDataset
 from georeference.utils.process.tools import getBoundsFromDataset
+from georeference.utils.process.tools import sortPolygonCoordinates
 
 class ToolsTest(unittest.TestCase):
 
@@ -79,6 +80,28 @@ class ToolsTest(unittest.TestCase):
         print '====================='
 
         self.assertTrue(isinstance(response,str))
+
+    def testSortPolygonCoordinates(self):
+
+        print '====================='
+        print 'Test if testSortPolygonCoordinates ...'
+        print '====================='
+
+        wrongArray = [[11.499968348633589, 51.100006191711365], [11.500029766654176, 50.999996094228884],
+                      [11.666697687046739, 51.09999838531544], [11.66663625943301, 51.000003906380776],
+                      [11.499968348633589, 51.100006191711365]]
+        correctArray = [[10.499998982954674, 51.70004323484564], [10.499999109696809, 51.599956002150265],
+                        [10.666666921079132, 51.600041018367804], [10.666667048036956, 51.69995821875753],
+                        [10.499998982954674, 51.70004323484564]]
+        wrongArrayResponse = sortPolygonCoordinates(wrongArray)
+        correctArrayResponse = sortPolygonCoordinates(correctArray)
+
+        print wrongArrayResponse
+
+        self.assertTrue(correctArray == correctArrayResponse, 'Response is not like expected')
+        self.assertTrue(wrongArray != wrongArrayResponse, 'Response is not like expected')
+
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

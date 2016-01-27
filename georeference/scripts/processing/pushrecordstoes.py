@@ -25,7 +25,9 @@ if __name__ == '__main__':
 
     for mapObj in maps:
         if mapObj.istaktiv == True:
+            print 'Push map record %s to elastic search ...' % mapObj.id
             georefObj = Georeferenzierungsprozess.getActualGeoreferenceProcessForMapId(mapObj.id, dbsession)
             pushRecordToSearchIndex(mapObj, dbsession, logger, georefObj)
         else:
+            print 'Remove map record %s from elastic search ...' % mapObj.id
             removeRecordFromSearchIndex(mapObj)

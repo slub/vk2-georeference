@@ -1,5 +1,6 @@
 import osgeo.osr as osr
 import gdal
+import copy
 from gdal import GA_ReadOnly
 
 def convertPostgisStringToList(string):
@@ -97,3 +98,44 @@ def parseSRIDFromFile(filePath):
     dataset = gdal.Open(filePath, GA_ReadOnly)
     epsgcode = extractSRIDFromDataset(dataset)
     return int(epsgcode.split(':')[1])
+
+def sortPolygonCoordinates(coordinates):
+    """ Functions gets a array of coordinates representing a rectangle an checks if the corners are correct
+    :type List.<number>: coordinates
+    :return: List.<number>
+    """
+    # the given coordinate list should have 5 coordinate points
+    if len(coordinates) != 5:
+        return coordinates
+
+    # create tempory copy and remove the last record from it
+    tmp = copy.copy(coordinates)
+    del tmp[-1]
+
+    # get min/max values
+    minx = miny = 99999999999
+    maxx = maxy = -99999999999
+    for coordinate in tmp:
+        minx = min(coordinate[0], minx)
+        miny = min(coordinate[1], miny)
+        maxx = max(coordinate[0], maxx)
+        maxy = max(coordinate[1], maxy)
+
+    midx = (maxx + minx) / 2
+    midy = (maxy + miny) / 2
+
+    ulc = llc = lrc = urc = 0
+    for coordinate in tmp:
+        dx = midx - coordinate[0]
+        dy = midy - coordinate[1]
+
+        if dx > 0 and dy > 0:
+            llc = coordinate
+        elif dx > 0 and dy < 0:
+            ulc = coordinate
+        elif dx < 0 and dy > 0:
+            lrc = coordinate
+        elif dx < 0 and dy < 0:
+            urc = coordinate
+
+    return [ulc, llc, lrc, urc, copy.copy(ulc) ]
