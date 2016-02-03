@@ -9,6 +9,7 @@ Created on Jul 2, 2015
 import json
 from georeference.models.meta import Base
 from georeference.models.vkdb.geometry import Geometry
+from georeference.models.vkdb.adminjobs import AdminJobs
 from georeference.utils.exceptions import ProcessIsInvalideException
 
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, desc, asc, PickleType
@@ -96,6 +97,10 @@ class Georeferenzierungsprozess(Base):
         
         # there are race conflicts
         for i in range(1, len(concurrentObjs)):
+            # check if there is a adminjob for this process and delete it first
+            adminjobs = AdminJobs.allForGeoreferenceid(concurrentObjs[i].id, dbsession)
+            for adminjob in adminjobs:
+                dbsession.delete(adminjob)
             dbsession.delete(concurrentObjs[i])
         return concurrentObjs[0]
     

@@ -15,12 +15,17 @@ class AdminJobs(Base):
     @classmethod
     def all(cls, session):
         return session.query(AdminJobs).order_by(desc(AdminJobs.id))
-    
+
+    @classmethod
+    def allForGeoreferenceid(cls, id, session):
+        return session.query(AdminJobs).filter(AdminJobs.georefid == id)
+
     @classmethod
     def by_id(cls, id, session):
         return session.query(AdminJobs).filter(AdminJobs.id == id).first()
-    
+
     @classmethod
     def getUnprocessedJobs(cls, session):
         return session.query(AdminJobs).filter(AdminJobs.processed == False).order_by(desc(AdminJobs.id))
+
     
