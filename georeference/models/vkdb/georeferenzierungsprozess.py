@@ -101,6 +101,7 @@ class Georeferenzierungsprozess(Base):
             adminjobs = AdminJobs.allForGeoreferenceid(concurrentObjs[i].id, dbsession)
             for adminjob in adminjobs:
                 dbsession.delete(adminjob)
+            dbsession.flush()
             dbsession.delete(concurrentObjs[i])
         return concurrentObjs[0]
     
