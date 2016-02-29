@@ -4,8 +4,9 @@ The following installation instructions were tested on a `Debian 8` os.
 
 ## Install system dependencies
 
-	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick python-pyproj gdal-bin
-	
+	apt-get install libgdal1-dev python-gdal cgi-mapserver python-mapscript python-dev python-imaging imagemagick python-pyproj gdal-bin postgis
+
+Postgis is needed because the pgsql2shp tool is used. If you install postgis it will also install a postgresql cluster. If you don't use this you can manually deactivate it again.
 ## Check out the repository
 
 	git clone https://git.slub-dresden.de/mendt/vk2-georeference
