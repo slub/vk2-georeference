@@ -41,8 +41,7 @@ if __name__ == '__main__':
         if mapObj.isttransformiert:
             jobList.append([
                 mapObj.georefimage,
-                os.path.join(DATA_DIRECTORY_TMS, str(mapObj.maptype).lower()),
-                mapObj.getSRID(dbsession)
+                os.path.join(DATA_DIRECTORY_TMS, str(mapObj.maptype).lower())
             ])
             tmsCachePath = os.path.join(DATA_DIRECTORY_TMS, str(mapObj.maptype).lower())
 
@@ -51,7 +50,7 @@ if __name__ == '__main__':
     if not RUN_IN_PARALLEL_MODE:
         print 'Update TMS cache serial ...'
         for record in jobList:
-            calculateCompressedTMS(record[0], record[1], record[2])
+            calculateCompressedTMS(record[0], record[1])
         print 'Finish update TMS cache!'
 
     else:
@@ -59,7 +58,7 @@ if __name__ == '__main__':
 
         # define parallel process function
         def updateTMSProcess(job):
-            calculateCompressedTMS(job[0], job[1], job[2])
+            calculateCompressedTMS(job[0], job[1])
             return job
 
         pool = mp.Pool(processes=NUMBER_PROCESSES)

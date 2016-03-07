@@ -8,6 +8,8 @@ import os
 import shutil
 import subprocess
 import sys
+import gdal
+from gdalconst import GA_ReadOnly
 from PIL import Image
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -17,24 +19,30 @@ sys.path.append(BASE_PATH_PARENT)
 
 TMP_DIR = '/tmp'
 
-def buildTMSCache(source_path, target_dir, srs = 4314):
+def buildTMSCache(source_path, target_dir):
     """ Functions calculates a Tile Map Service cache for a given georeferenced source file.
 
-    :param str: source_path Path to georeference image file
-    :param str: target_dir Path to the directory where the cache should be placed
-    :param int: srs SRS of the given source file
+    :type str: source_path Path to georeference image file
+    :type str: target_dir Path to the directory where the cache should be placed
     :return: str  """
     print('------------------------------------------------------------------')
     file_name, file_extension = os.path.splitext(os.path.basename(source_path))
-    
+
+    # extract epsg from source file
+    print('Extract input projection ...')
+    dataset = gdal.Open(source_path, GA_ReadOnly)
+    projection = dataset.GetProjectionRef()
+    del dataset
+
     # check if target dir extist
     tms_target_dir = os.path.join(target_dir, file_name)
     if os.path.exists(tms_target_dir):
         print('Remove old tsm cache directory ...')
         shutil.rmtree(tms_target_dir)
-                  
+
+
     os.makedirs(tms_target_dir)
-    command = 'gdal2tiles.py -z 1-15 -w none -s EPSG:%s %s %s'%(srs, source_path, tms_target_dir)
+    command = 'gdal2tiles.py -z 1-15 -w none -s %s#  %s %s'%(projection, source_path, tms_target_dir)
 
     print('Execute - %s'%command)
     subprocess.call(command, shell = True)
@@ -42,24 +50,34 @@ def buildTMSCache(source_path, target_dir, srs = 4314):
 
     return tms_target_dir
 
-def calculateCompressedTMS(inputImage, targetDir, epsgCode):
+def calculateCompressedTMS(inputImage, targetDir):
     """ The following functions computes a compressed version of TMS cache.
 
     :type str: inputImage
     :type str: targetDir
-    :type int: epsgCode
     :return:
     """
     print('Calculate tms cache ...')
-    tmpCacheDir = buildTMSCache(inputImage, TMP_DIR, epsgCode)
+    tmpCacheDir = buildTMSCache(inputImage, TMP_DIR)
 
     print('Compress cache ...')
     compressTMSCache(tmpCacheDir)
 
     # check if the target dir exits, if yes remove it
-    if os.path.exists(os.path.join(targetDir, os.path.basename(inputImage).split('.')[0])):
+    tmsDir = os.path.join(targetDir, os.path.basename(inputImage).split('.')[0])
+    if os.path.exists(tmsDir):
         print('Remove old target dir ...')
-        shutil.rmtree(os.path.join(targetDir, os.path.basename(inputImage).split('.')[0]))
+        shutil.rmtree(tmsDir)
+
+    print('Check if base tile directory is add to cache and add it if not ...')
+    baseTileDir = os.path.join(tmpCacheDir, '0')
+    baseTile = os.path.join(baseTileDir, '0.png')
+    if not os.path.exists(baseTile):
+        if not os.path.exists(baseTileDir):
+            os.mkdir(baseTileDir)
+
+        image = Image.new('RGBA', (256,256), (255, 0, 0, 0))
+        image.save(baseTile, 'PNG', transparency= 0)
 
     print('Copy compressed cache to target dir ...')
     subprocess.call(['rsync', '-rI', tmpCacheDir, targetDir])
@@ -110,7 +128,6 @@ def getImageFilesInDirTree(baseDir, imageExtension):
     return images
 
 
-
 """ Main """    
 if __name__ == '__main__':
     script_name = 'updatetms.py'
@@ -119,5 +136,6 @@ if __name__ == '__main__':
     parser.add_argument('--target_dir', help='Directory where the TMS directories should be placed.')
     parser.add_argument('--source_dir', help='Source directory') 
     arguments = parser.parse_args()
-    
-    # updateTMSCache(arguments.source_dir, arguments.target_dir,logger)
+
+    calculateCompressedTMS('/srv/vk/data/georef/gl/df_dk_0004678.tif', '/home/mendt/Desktop/Test')
+    # updateTMS(arguments.source_dir, arguments.target_dir,logger)
