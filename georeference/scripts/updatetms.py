@@ -19,6 +19,21 @@ sys.path.append(BASE_PATH_PARENT)
 
 TMP_DIR = '/tmp'
 
+def addBaseTile(targetDir):
+    """ Functions adds a basetile dir to a directory in case it doesn't exits.
+
+    :type str: targetDir
+    :return:
+    """
+    baseTileDir = os.path.join(targetDir, '0/0')
+    baseTile = os.path.join(baseTileDir, '0.png')
+    if not os.path.exists(baseTile):
+        if not os.path.exists(baseTileDir):
+            os.makedirs(baseTileDir)
+
+        image = Image.new('RGBA', (256,256), (255, 0, 0, 0))
+        image.save(baseTile, 'PNG', transparency= 0)
+
 def buildTMSCache(source_path, target_dir):
     """ Functions calculates a Tile Map Service cache for a given georeferenced source file.
 
@@ -70,14 +85,7 @@ def calculateCompressedTMS(inputImage, targetDir):
         shutil.rmtree(tmsDir)
 
     print('Check if base tile directory is add to cache and add it if not ...')
-    baseTileDir = os.path.join(tmpCacheDir, '0')
-    baseTile = os.path.join(baseTileDir, '0.png')
-    if not os.path.exists(baseTile):
-        if not os.path.exists(baseTileDir):
-            os.mkdir(baseTileDir)
-
-        image = Image.new('RGBA', (256,256), (255, 0, 0, 0))
-        image.save(baseTile, 'PNG', transparency= 0)
+    addBaseTile(tmpCacheDir)
 
     print('Copy compressed cache to target dir ...')
     subprocess.call(['rsync', '-rI', tmpCacheDir, targetDir])
@@ -137,5 +145,5 @@ if __name__ == '__main__':
     parser.add_argument('--source_dir', help='Source directory') 
     arguments = parser.parse_args()
 
-    calculateCompressedTMS('/srv/vk/data/georef/gl/df_dk_0004678.tif', '/home/mendt/Desktop/Test')
-    # updateTMS(arguments.source_dir, arguments.target_dir,logger)
+    # calculateCompressedTMS('/srv/vk/data/georef/gl/df_dk_0004678.tif', '/home/mendt/Desktop/Test')
+    calculateCompressedTMS(arguments.source_dir, arguments.target_dir)
