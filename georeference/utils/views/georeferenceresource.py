@@ -55,12 +55,15 @@ def getSpecificGeoreferenceData(georefObj, mapObj, srid,  dbsession):
     :type sqlalchemy.orm.session.Session: dbsession
     :return: dict """
     params = {
-        'extent': mapObj.getExtent(dbsession, srid),
         'georeference': georefObj.georefparams,
         'timestamp': str(georefObj.timestamp),
         'type': 'update',
         'georeferenceid': georefObj.id
     }
+
+    # if mapObj is georeference
+    if mapObj.isttransformiert:
+        params['extent'] = mapObj.getExtent(dbsession, srid)
 
     # if clip params exist add them
     if georefObj.clip is not None:
