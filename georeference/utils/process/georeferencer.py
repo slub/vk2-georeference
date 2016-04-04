@@ -400,7 +400,7 @@ def rectifyPolynom(srcFile, dstFile, maskPolygon, gcps, srs, logger, tmpDir, cli
             logger.debug('Do georeferencing based on a polynom transformation ...')
             resampling = 'near'
             order = order if order in [1,2,3] else None
-            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 500 -r %s -wm 500 ' % resampling
+            command = 'gdalwarp -overwrite --config GDAL_CACHEMAX 1000 -r %s -wm 1000 ' % resampling
 
             # check if order is described
             if order is not None:
